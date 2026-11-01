@@ -6,6 +6,8 @@ export const CATALOG = {
   board: '04',
   storage: '05',
   system: '06',
+  network: '07',
+  overlay: '08',
 } as const
 
 /** "Intel(R) Core(TM) i5-10400F CPU @ 2.90GHz" -> "Intel Core i5-10400F" (the clock has its own row). */

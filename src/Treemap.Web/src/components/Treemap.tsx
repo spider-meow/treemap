@@ -1,6 +1,7 @@
 import { motion } from 'motion/react'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useMemo } from 'react'
 import type { ChildDto } from '../bridge/types'
+import { useSize } from '../hooks/useSize'
 import { formatBytes } from '../lib/format'
 import { squarify } from '../lib/squarify'
 import './treemap.css'
@@ -16,23 +17,6 @@ interface TreemapProps {
   checked: ReadonlySet<string>
   onFocus: (path: string) => void
   onOpen: (item: ChildDto) => void
-}
-
-function useSize<T extends HTMLElement>() {
-  const ref = useRef<T>(null)
-  const [size, setSize] = useState({ w: 0, h: 0 })
-
-  useEffect(() => {
-    const element = ref.current
-    if (!element) return
-    const observer = new ResizeObserver(([entry]) => {
-      setSize({ w: Math.floor(entry.contentRect.width), h: Math.floor(entry.contentRect.height) })
-    })
-    observer.observe(element)
-    return () => observer.disconnect()
-  }, [])
-
-  return [ref, size] as const
 }
 
 const VERDICT_LABEL = {

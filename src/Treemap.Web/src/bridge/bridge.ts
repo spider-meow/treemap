@@ -1,6 +1,7 @@
 import { createMockMetrics, mockSpecs } from './mock'
+import { createMockOverlay } from './mockOverlay'
 import { createMockStorage } from './mockStorage'
-import type { MetricsSnapshot, SystemSpecs } from './types'
+import type { MetricsSnapshot, OverlaySettings, SystemSpecs } from './types'
 
 /**
  * Message bridge to the C# engine. Inside the app (WebView2) messages travel as JSON through
@@ -96,11 +97,16 @@ export function subscribe<T>(type: string, handler: (payload: T) => void): () =>
 function startMockEvents(): void {
   if (mockTimer) return
   const next = createMockMetrics()
-  mockTimer = setInterval(() => emit('metrics', next() satisfies MetricsSnapshot), 1000)
-  emit('metrics', next())
+  const tick = () => {
+    emit('metrics', next() satisfies MetricsSnapshot)
+    emit('fps', { processName: 'FlightSimulator.exe', fps: 52 + Math.random() * 14 })
+  }
+  mockTimer = setInterval(tick, 1000)
+  tick()
 }
 
 const mockStorage = createMockStorage(emit)
+const mockOverlay = createMockOverlay()
 
 async function mockRequest(type: string, payload: unknown): Promise<unknown> {
   await new Promise((resolve) => setTimeout(resolve, 120))
@@ -108,6 +114,12 @@ async function mockRequest(type: string, payload: unknown): Promise<unknown> {
   switch (type) {
     case 'specs.get':
       return mockSpecs satisfies SystemSpecs
+    case 'overlay.get':
+      return mockOverlay.get()
+    case 'overlay.update':
+      return mockOverlay.update(payload as OverlaySettings)
+    case 'overlay.relaunchAsAdmin':
+      return mockOverlay.relaunchAsAdmin()
     case 'storage.drives':
       return mockStorage.drives()
     case 'storage.scan':

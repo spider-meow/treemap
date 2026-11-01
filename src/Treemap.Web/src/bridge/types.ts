@@ -227,3 +227,35 @@ export interface DeleteReplyDto {
   hogs: HogDto[]
   rootSizeBytes: number
 }
+
+// ---- Overlay -------------------------------------------------------------------------------------------------------
+
+export type OverlayCorner = 'topLeft' | 'topRight' | 'bottomLeft' | 'bottomRight'
+
+export interface OverlaySettings {
+  enabled: boolean
+  showFps: boolean
+  showCpu: boolean
+  showGpu: boolean
+  showGpuTemperature: boolean
+  showMemory: boolean
+  showVideoMemory: boolean
+  corner: OverlayCorner
+  opacity: number
+}
+
+export type FpsStatus = 'notStarted' | 'running' | 'needsAdministrator' | 'failed'
+
+export interface OverlayState {
+  settings: OverlaySettings
+  minOpacity: number
+  fpsStatus: FpsStatus
+  fpsMessage: string | null
+  canRelaunchAsAdmin: boolean
+  hotkey: { registered: boolean; description: string }
+}
+
+export interface FpsReading {
+  processName: string
+  fps: number
+}
