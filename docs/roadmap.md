@@ -9,6 +9,16 @@ Ordre proposé. Chaque étape doit être utilisable seule.
 - [x] SDK .NET 10 installé, solution `Treemap.slnx` créée (Core, App WPF, tests xUnit)
 - [x] Repo git initialisé et poussé, workflow : petits commits sur `main`, un push par commit, pas de PR
 
+## 0 bis. Nouvelle interface web (en cours)
+- [x] Design system et coquille animée (palette crème / vert forêt / orange, typographie Archivo)
+- [x] Hébergement WebView2 et pont vers le moteur (`--web`, `--dev`)
+- [x] Écran Composants refait, branché sur le vrai moteur (specs et mesures en direct)
+- [ ] Écran Moniteur refait
+- [ ] Écran Stockage refait, avec suppression sécurisée (corbeille, dossiers système protégés, aperçu, confirmation ; désinstallation guidée des jeux par leur lanceur)
+- [ ] Vue 3D des composants (cliquer un composant pour voir ses détails)
+- [ ] Réhabiller l'overlay avec la nouvelle palette
+- [ ] Retirer l'interface WPF une fois la parité atteinte, DESIGN.md et revue finale du design
+
 ## 1. Stockage : V1 livrée
 - [x] Scan d'un dossier / d'un disque, avec progression et annulation
 - [x] Arbre des dossiers trié par taille, avec part du dossier parent
@@ -46,7 +56,10 @@ Ordre proposé. Chaque étape doit être utilisable seule.
 - [ ] Raccourci personnalisable
 - [ ] Icône dans la zone de notification pour garder l'overlay actif fenêtre fermée
 
-## 5. Optimisation
+## 5. Booster de jeu
+À cadrer avec l'utilisateur avant de coder. Pistes retenues : détection du lancement d'un jeu, fermeture (avec liste et accord) des applications gourmandes en arrière-plan, priorité du processus du jeu, plan d'alimentation hautes performances, tout restauré à la fermeture du jeu, avec une mesure avant/après. Les « nettoyeurs de RAM » sont écartés (effet placebo). Aucune injection de code dans les jeux.
+
+## 6. Optimisation
 - [ ] Programmes au démarrage (lecture, puis activation/désactivation avec confirmation)
 - [ ] Processus gourmands
 - [ ] Nettoyage assisté (toujours avec aperçu et confirmation)

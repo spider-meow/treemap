@@ -26,10 +26,25 @@ L'appli n'a pas besoin des droits administrateur, sauf pour le FPS de l'overlay 
 |---|---|
 | `--tab=components`, `--tab=storage` ou `--tab=monitor` | ouvre directement un onglet |
 | `--scan=C:\chemin` | ouvre l'onglet Stockage et lance l'analyse du chemin |
+| `--web` | affiche la nouvelle interface web (WebView2) au lieu de l'interface WPF ; `--tab=` choisit l'écran |
+| `--dev` | comme `--web`, mais charge l'interface depuis le serveur Vite (`http://localhost:5173`), avec rechargement à chaud |
 
 ```bash
 dotnet run --project src/Treemap.App -- --scan=C:\
 ```
+
+### Interface web
+
+Pour l'instant seul l'écran Composants est refait dans le nouveau design ; l'interface WPF reste celle par défaut jusqu'à ce que Stockage et Moniteur soient portés.
+
+```bash
+cd src/Treemap.Web
+npm install
+npm run build            # produit dist/, copié à côté de l'exécutable au build de l'appli
+dotnet run --project ../Treemap.App -- --web
+```
+
+Pour travailler sur le design : `npm run dev` dans `src/Treemap.Web`, puis lancer l'appli avec `--dev`. Dans un navigateur ordinaire, un moteur factice répond à la place du moteur C# (valeurs d'exemple). `npm test` lance les tests de l'interface.
 
 ## Tests
 

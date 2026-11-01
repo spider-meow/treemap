@@ -12,6 +12,17 @@ Choisi le 2026-11-01. Machine cible : Windows 11, RTX 3060, i5-10400F, disque C:
 
 État de l'environnement au moment du choix : Node 24 et Python 3.13 présents ; seuls les runtimes .NET 8 (Core + Desktop) sont installés, **pas de SDK**. SDK cible : .NET 10 (LTS), paquet winget `Microsoft.DotNet.SDK.10`.
 
+## Décision : interface web dans WebView2 (2026-11-01)
+
+L'interface WPF a atteint ses limites pour ce qui est demandé ensuite : une vue 3D des composants, un design travaillé (palette, typographie, transitions) et des animations. Le moteur C# reste tel quel ; seule la couche d'affichage change.
+
+- **Interface** : `src/Treemap.Web`, Vite + React 19 + TypeScript, `motion` pour les animations, `lucide-react` pour les icônes, Three.js (react-three-fiber) prévu pour la vue 3D. Tests avec Vitest.
+- **Hébergement** : `Treemap.App` ouvre l'interface dans un WebView2 (`WebHostWindow`). L'interface construite est servie depuis le dossier `web/` à côté de l'exécutable, par un nom d'hôte virtuel (`https://treemap.app`) : aucun port réseau n'est ouvert. Les popups et la navigation hors de cette origine sont bloquées.
+- **Pont** : messages JSON entre la page et le moteur. Format côté page → moteur `{ id, type, payload }`, réponse `{ kind: "response", id, ok, payload | error }`, évènement poussé `{ kind: "event", type, payload }`. Le routage vit dans `Treemap.Core.Bridge.BridgeRouter` (testé, sans dépendance à WebView2) ; `WebBridge` (dans App) le branche au WebView2 et n'accepte que les messages venant de l'origine servie. Messages actuels : `specs.get` et l'évènement `metrics` (une fois par seconde). Hors de l'appli, `bridge/mock.ts` répond à la place du moteur.
+- **Overlay** : reste une fenêtre WPF native (transparente, click-through) ; une page web ne peut pas jouer ce rôle.
+- **Transition** : l'interface WPF reste l'écran par défaut ; `--web` / `--dev` ouvrent la nouvelle. Elle sera retirée quand Stockage et Moniteur auront leur équivalent web.
+- **Design** : direction « fiche de catalogue industriel » (voir `PRODUCT.md` et `.impeccable/surfaces/`), palette crème / vert forêt / orange mandarine, accent jaune cristal.
+
 ## Briques techniques
 
 - **Specs** : WMI via `System.Management` (`Win32_Processor`, `Win32_VideoController`, `Win32_PhysicalMemory`, `MSFT_PhysicalDisk`...). Mémoire vidéo lue dans le registre (WMI plafonne `AdapterRAM` à 4 Go). Chaque section échoue indépendamment dans une liste d'avertissements.
@@ -37,7 +48,9 @@ treemap/
       Monitoring/        mesures en direct, historique, contenu de l'overlay
         Fps/             comptage de FPS, source ETW
       Settings/          réglages (JSON)
-    Treemap.App/       interface WPF, référence Core
+      Bridge/            routeur des messages JSON de l'interface web
+    Treemap.Web/       interface web (Vite + React), hébergée dans WebView2
+    Treemap.App/       interface WPF et hôte WebView2, référence Core
       Controls/          TreemapControl
       ViewModels/        Main, Components, Storage, Monitor, OverlaySettings
       Views/             ComponentsView, StorageView, MonitorView
