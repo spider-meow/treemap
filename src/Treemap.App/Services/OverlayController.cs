@@ -1,6 +1,7 @@
 using System.IO;
 using System.Windows.Threading;
 using Treemap.App.Infrastructure;
+using Treemap.Core.Bridge;
 using Treemap.Core.Monitoring;
 using Treemap.Core.Monitoring.Fps;
 using Treemap.Core.Settings;
@@ -22,7 +23,7 @@ public sealed class OverlayViewModel : ObservableObject
 /// Owns the overlay settings and the overlay window: shows or hides it, keeps its content fresh, starts the frame
 /// counter only when the overlay actually needs FPS, and saves every change.
 /// </summary>
-public sealed class OverlayController : IDisposable
+public sealed class OverlayController : IOverlayControl, IDisposable
 {
     private readonly MonitoringService _monitoring;
     private readonly SettingsStore _store;
@@ -46,6 +47,8 @@ public sealed class OverlayController : IDisposable
     public OverlaySettings Settings => _settings.Overlay;
 
     public FpsSourceState FpsState => _fps?.State ?? new FpsSourceState(FpsStatus.NotStarted);
+
+    public FpsReading? CurrentFps => _fps?.GetCurrent();
 
     public void Start() => Apply();
 

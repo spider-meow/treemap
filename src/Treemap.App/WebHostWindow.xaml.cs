@@ -3,6 +3,7 @@ using System.Windows;
 using System.Windows.Media;
 using Microsoft.Web.WebView2.Core;
 using Treemap.App.Services;
+using Treemap.Core.Bridge;
 using Treemap.Core.Specs;
 
 namespace Treemap.App;
@@ -19,6 +20,8 @@ public partial class WebHostWindow : Window
     private readonly ISpecsProvider _specs;
     private readonly MonitoringService _monitoring;
     private readonly bool _dev;
+    private readonly OverlayController _overlay;
+    private readonly GlobalHotkey _hotkey;
     private WebBridge? _bridge;
 
     private static readonly string[] Pages = ["composants", "stockage", "moniteur"];
@@ -26,11 +29,13 @@ public partial class WebHostWindow : Window
     private readonly string _startPage;
     private readonly string? _scanPath;
 
-    public WebHostWindow(ISpecsProvider specs, MonitoringService monitoring, StartupOptions options)
+    public WebHostWindow(ISpecsProvider specs, MonitoringService monitoring, OverlayController overlay, GlobalHotkey hotkey, StartupOptions options)
     {
         InitializeComponent();
         _specs = specs;
         _monitoring = monitoring;
+        _overlay = overlay;
+        _hotkey = hotkey;
         _dev = options.DevServer;
         _startPage = Pages[Math.Clamp(options.TabIndex, 0, Pages.Length - 1)];
         _scanPath = options.ScanPath;
@@ -81,7 +86,10 @@ public partial class WebHostWindow : Window
             }
         };
 
-        _bridge = new WebBridge(core, origin, _specs, _monitoring);
+        _bridge = new WebBridge(
+            core, origin, _specs, _monitoring, _overlay,
+            () => new HotkeyInfo(_hotkey.IsRegistered, GlobalHotkey.Description),
+            _dev ? "--dev --tab=monitor" : "--web --tab=monitor");
         var hash = _scanPath is null ? _startPage : $"{_startPage}?scan={Uri.EscapeDataString(_scanPath)}";
         core.Navigate($"{origin}/index.html#{hash}");
     }

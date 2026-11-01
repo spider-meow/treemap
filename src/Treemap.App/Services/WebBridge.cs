@@ -17,12 +17,24 @@ public sealed class WebBridge : IDisposable
     private readonly string _trustedOrigin;
     private readonly BridgeRouter _router = new();
     private readonly MonitoringService _monitoring;
+    private readonly OverlayController _overlayController;
+    private readonly OverlayBridge _overlay;
 
-    public WebBridge(CoreWebView2 webView, string trustedOrigin, ISpecsProvider specs, MonitoringService monitoring)
+    public WebBridge(
+        CoreWebView2 webView,
+        string trustedOrigin,
+        ISpecsProvider specs,
+        MonitoringService monitoring,
+        OverlayController overlay,
+        Func<HotkeyInfo> hotkey,
+        string relaunchArguments)
     {
         _webView = webView;
         _trustedOrigin = trustedOrigin;
         _monitoring = monitoring;
+        _overlayController = overlay;
+        _overlay = new OverlayBridge(overlay, hotkey, () => AdminRelauncher.Relaunch(relaunchArguments));
+        _overlay.Register(_router);
 
         _router.Register("specs.get", async () => await specs.GetAsync());
         new StorageBridge(new StorageSession(), new ShellRecycler(), new ShellLauncher(), PostEvent).Register(_router);
@@ -36,11 +48,13 @@ public sealed class WebBridge : IDisposable
 
         _webView.WebMessageReceived += OnMessage;
         _monitoring.Updated += OnMetrics;
+        _overlayController.Changed += OnOverlayChanged;
     }
 
     public void Dispose()
     {
         _monitoring.Updated -= OnMetrics;
+        _overlayController.Changed -= OnOverlayChanged;
         _webView.WebMessageReceived -= OnMessage;
     }
 
@@ -64,8 +78,11 @@ public sealed class WebBridge : IDisposable
         if (_monitoring.Latest is { } snapshot)
         {
             PostEvent("metrics", snapshot);
+            PostEvent("fps", _overlay.Fps());
         }
     }
+
+    private void OnOverlayChanged(object? sender, EventArgs e) => PostEvent("overlay.changed", _overlay.State());
 
     /// <summary>Events may come from scan threads; WebView2 only accepts messages on the UI thread.</summary>
     private void PostEvent(string type, object? payload)

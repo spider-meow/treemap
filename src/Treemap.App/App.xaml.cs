@@ -30,7 +30,7 @@ public partial class App : Application
         // The web interface replaces the WPF one screen by screen; until it has parity it is opt-in (--web / --dev).
         if (options.UseWeb)
         {
-            var webWindow = new WebHostWindow(specs, _monitoring, options);
+            var webWindow = new WebHostWindow(specs, _monitoring, _overlay, _hotkey, options);
             _hotkey.Register(webWindow);
             webWindow.Show();
             _monitoring.Start();
