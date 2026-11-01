@@ -38,7 +38,6 @@ Seules ces adresses peuvent être lancées (`DeletionAdvisor.IsSafeLauncherUri`)
 - Chemins de 260 caractères ou plus : refusés (le shell ne les gère pas).
 - Un élément trop gros pour la Corbeille : Windows demande lui-même confirmation avant de le détruire (`FOF_WANTNUKEWARNING`) ; un refus est signalé comme non supprimé.
 - Les règles de classement sont fondées sur les chemins : un jeu installé dans un dossier sans `steamapps`, `Epic Games` ou `XboxGames` est vu comme un dossier ordinaire (confirmation tapée s'il pèse 10 Go ou plus).
-- Fichiers de l'ancien écran WPF : la suppression n'y existe pas ; elle vit uniquement dans l'interface web.
 
 ## Messages du pont
 

@@ -89,7 +89,7 @@ public partial class WebHostWindow : Window
         _bridge = new WebBridge(
             core, origin, _specs, _monitoring, _overlay,
             () => new HotkeyInfo(_hotkey.IsRegistered, GlobalHotkey.Description),
-            _dev ? "--dev --tab=monitor" : "--web --tab=monitor");
+            _dev ? "--dev --tab=monitor" : "--tab=monitor");
         var hash = _scanPath is null ? _startPage : $"{_startPage}?scan={Uri.EscapeDataString(_scanPath)}";
         core.Navigate($"{origin}/index.html#{hash}");
     }

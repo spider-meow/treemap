@@ -1,45 +1,7 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
-    <!-- One restrained accent on neutral surfaces: this is a tool, the data is the colour. -->
-    <Color x:Key="AppBackgroundColor">#15171C</Color>
-    <Color x:Key="CardBackgroundColor">#1E2128</Color>
-    <Color x:Key="CardBorderColor">#2C313B</Color>
-    <Color x:Key="AccentColor">#4F9DF7</Color>
-    <Color x:Key="WarnColor">#E5A93B</Color>
-    <Color x:Key="DangerColor">#E5584F</Color>
-
-    <SolidColorBrush x:Key="AppBackground" Color="{StaticResource AppBackgroundColor}" />
-    <SolidColorBrush x:Key="CardBackground" Color="{StaticResource CardBackgroundColor}" />
-    <SolidColorBrush x:Key="CardBorder" Color="{StaticResource CardBorderColor}" />
-    <SolidColorBrush x:Key="AccentBrush" Color="{StaticResource AccentColor}" />
-    <SolidColorBrush x:Key="AccentFillBrush" Color="#264F9DF7" />
-    <SolidColorBrush x:Key="WarnBrush" Color="{StaticResource WarnColor}" />
-    <SolidColorBrush x:Key="DangerBrush" Color="{StaticResource DangerColor}" />
+    <!-- What the native overlay window needs. The rest of the interface is the web interface (src/Treemap.Web). -->
     <SolidColorBrush x:Key="TextPrimary" Color="#E7E9ED" />
     <SolidColorBrush x:Key="TextMuted" Color="#8C94A3" />
-
-    <Style x:Key="Muted" TargetType="TextBlock">
-        <Setter Property="Foreground" Value="{StaticResource TextMuted}" />
-    </Style>
-
-    <Style x:Key="SectionTitle" TargetType="TextBlock">
-        <Setter Property="Foreground" Value="{StaticResource TextPrimary}" />
-        <Setter Property="FontSize" Value="13" />
-        <Setter Property="FontWeight" Value="SemiBold" />
-    </Style>
-
-    <Style x:Key="PageTitle" TargetType="TextBlock">
-        <Setter Property="Foreground" Value="{StaticResource TextPrimary}" />
-        <Setter Property="FontSize" Value="22" />
-        <Setter Property="FontWeight" Value="SemiBold" />
-    </Style>
-
-    <Style x:Key="Card" TargetType="Border">
-        <Setter Property="Background" Value="{StaticResource CardBackground}" />
-        <Setter Property="BorderBrush" Value="{StaticResource CardBorder}" />
-        <Setter Property="BorderThickness" Value="1" />
-        <Setter Property="CornerRadius" Value="8" />
-        <Setter Property="Padding" Value="16" />
-    </Style>
 </ResourceDictionary>

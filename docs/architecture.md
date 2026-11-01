@@ -20,7 +20,7 @@ L'interface WPF a atteint ses limites pour ce qui est demandé ensuite : une vue
 - **Hébergement** : `Treemap.App` ouvre l'interface dans un WebView2 (`WebHostWindow`). L'interface construite est servie depuis le dossier `web/` à côté de l'exécutable, par un nom d'hôte virtuel (`https://treemap.app`) : aucun port réseau n'est ouvert. Les popups et la navigation hors de cette origine sont bloquées.
 - **Pont** : messages JSON entre la page et le moteur. Format côté page → moteur `{ id, type, payload }`, réponse `{ kind: "response", id, ok, payload | error }`, évènement poussé `{ kind: "event", type, payload }`. Le routage vit dans `Treemap.Core.Bridge.BridgeRouter` (testé, sans dépendance à WebView2) ; `WebBridge` (dans App) le branche au WebView2 et n'accepte que les messages venant de l'origine servie. Messages actuels : `specs.get`, l'évènement `metrics` (une fois par seconde) les messages `overlay.*` (réglages, relance en administrateur, évènements `overlay.changed` et `fps`, portés par `OverlayBridge`) et les messages `storage.*` (voir [storage-cleanup.md](storage-cleanup.md)) portés par `Treemap.Core.Bridge.StorageBridge`, qui reste testable : il ne dépend que de `IRecycler` et `IShellLauncher`. Hors de l'appli, `bridge/mock.ts` répond à la place du moteur.
 - **Overlay** : reste une fenêtre WPF native (transparente, click-through) ; une page web ne peut pas jouer ce rôle.
-- **Transition** : l'interface WPF reste l'écran par défaut ; `--web` / `--dev` ouvrent la nouvelle. Elle sera retirée quand Stockage et Moniteur auront leur équivalent web.
+- **Interface par défaut** : l'interface web est la seule interface ; les écrans WPF (fenêtre principale, vues, view-models, contrôle treemap) ont été retirés. Il reste côté WPF l'hôte WebView2, l'overlay et les services.
 - **Design** : direction « fiche de catalogue industriel » (voir `PRODUCT.md` et `.impeccable/surfaces/`), palette crème / vert forêt / orange mandarine, accent jaune cristal.
 
 ## Briques techniques
@@ -29,8 +29,8 @@ L'interface WPF a atteint ses limites pour ce qui est demandé ensuite : une vue
 - **Capteurs** : kernel32, compteurs de performance et NVML (GPU NVIDIA), sans droits administrateur ni pilote. LibreHardwareMonitor est écarté pour l'instant car il charge un pilote noyau (voir [monitoring.md](monitoring.md)).
 - **FPS** : ETW (providers DXGI et D3D9, événement Present, comme PresentMon) via `Microsoft.Diagnostics.Tracing.TraceEvent`. Demande les droits administrateur, aucune injection.
 - **Scan disque** : parcours récursif parallèle (`DiskScanner`), taille réelle des fichiers creux/compressés, voir [storage-scan.md](storage-scan.md). Lecture directe de la MFT (façon WizTree) en amélioration ultérieure (droits admin).
-- **Treemap** : algorithme squarified dans `Treemap.Core` (pur, testé), rendu par un contrôle WPF maison (`TreemapControl`, `DrawingContext`), 600 cellules maximum, petits fichiers regroupés.
-- **Interface** : WPF avec le thème Fluent sombre intégré (`ThemeMode="Dark"`, encore marqué expérimental), MVVM minimal sans bibliothèque externe, palette neutre avec un seul accent (`Themes/Palette.xaml`).
+- **Treemap** : rendu par l'interface web (`lib/squarify.ts`, testé) ; l'algorithme C# de `Treemap.Core` n'est plus utilisé par l'appli (candidat au retrait). Petits fichiers regroupés par le scanner.
+- **Interface** : web dans WebView2 (voir plus haut). WPF ne sert plus que pour l'hôte, l'overlay (`Themes/Palette.xaml` : deux couleurs de texte) et les services.
 - **Overlay** : fenêtre transparente, click-through, toujours au-dessus. Fonctionne en jeu fenêtré/borderless ; le plein écran exclusif est hors périmètre.
 
 ## Structure du repo
@@ -51,9 +51,6 @@ treemap/
       Bridge/            routeur des messages JSON de l'interface web
     Treemap.Web/       interface web (Vite + React), hébergée dans WebView2
     Treemap.App/       interface WPF et hôte WebView2, référence Core
-      Controls/          TreemapControl
-      ViewModels/        Main, Components, Storage, Monitor, OverlaySettings
-      Views/             ComponentsView, StorageView, MonitorView
       Services/          MonitoringService, OverlayController, GlobalHotkey, AdminRelauncher
       OverlayWindow      fenêtre overlay (dans le projet App, pas de projet séparé)
       Themes/            palette

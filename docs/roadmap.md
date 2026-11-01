@@ -18,7 +18,8 @@ Ordre proposé. Chaque étape doit être utilisable seule.
 - [ ] Stockage : vider la Corbeille depuis l'appli (action séparée, avec confirmation), éléments gérés dans des dossiers à chemin long, tri/filtre de la liste
 - [ ] Vue 3D des composants (cliquer un composant pour voir ses détails)
 - [ ] Réhabiller l'overlay avec la nouvelle palette
-- [ ] Passer l'interface web par défaut et retirer l'interface WPF (la parité des trois écrans est atteinte), DESIGN.md et revue finale du design
+- [x] Interface web par défaut, interface WPF retirée
+- [ ] Retirer de Treemap.Core le code devenu inutile (SquarifiedTreemap, SpecsSummary et leurs tests), DESIGN.md et revue finale du design
 
 ## 1. Stockage : V1 livrée
 - [x] Scan d'un dossier / d'un disque, avec progression et annulation

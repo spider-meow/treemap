@@ -2,11 +2,11 @@ namespace Treemap.App;
 
 /// <summary>
 /// Optional command-line switches, mostly handy while developing:
-/// <c>--tab=components|storage|monitor</c> opens a tab, <c>--scan=PATH</c> starts a scan of PATH (and opens the storage tab),
-/// <c>--web</c> shows the new web interface, <c>--dev</c> shows it from the Vite dev server (implies <c>--web</c>).
-/// Unknown arguments are ignored.
+/// <c>--tab=components|storage|monitor</c> opens a screen, <c>--scan=PATH</c> starts a scan of PATH (and opens the storage screen),
+/// <c>--dev</c> loads the interface from the Vite dev server instead of the built one.
+/// Unknown arguments are ignored (<c>--web</c>, from the time the web interface was opt-in, included).
 /// </summary>
-public sealed record StartupOptions(int TabIndex = 0, string? ScanPath = null, bool UseWeb = false, bool DevServer = false)
+public sealed record StartupOptions(int TabIndex = 0, string? ScanPath = null, bool DevServer = false)
 {
     private static readonly string[] TabNames = ["components", "storage", "monitor"];
 
@@ -14,7 +14,6 @@ public sealed record StartupOptions(int TabIndex = 0, string? ScanPath = null, b
     {
         var tab = 0;
         string? scanPath = null;
-        var web = false;
         var dev = false;
 
         foreach (var arg in args)
@@ -36,17 +35,12 @@ public sealed record StartupOptions(int TabIndex = 0, string? ScanPath = null, b
                     tab = Array.IndexOf(TabNames, "storage");
                 }
             }
-            else if (arg.Equals("--web", StringComparison.OrdinalIgnoreCase))
-            {
-                web = true;
-            }
             else if (arg.Equals("--dev", StringComparison.OrdinalIgnoreCase))
             {
-                web = true;
                 dev = true;
             }
         }
 
-        return new StartupOptions(tab, scanPath, web, dev);
+        return new StartupOptions(tab, scanPath, dev);
     }
 }
