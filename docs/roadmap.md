@@ -6,7 +6,8 @@ Ordre proposé. Chaque étape doit être utilisable seule.
 - [x] Nom du projet : `treemap`
 - [x] Dossier `docs/` et outillage Claude (`.claude/`)
 - [x] Choix de la stack : C# + WPF (voir architecture.md)
-- [ ] Installer le SDK .NET 10 et créer la solution
+- [x] SDK .NET 10 installé, solution `Treemap.slnx` créée (Core, App WPF, tests xUnit), build OK
+- [ ] Workflow : petits commits directement sur `main`, pas de PR
 - [ ] Initialisation du repo git et premier push
 
 ## 1. Stockage (MVP)
