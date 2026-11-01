@@ -1,6 +1,9 @@
+using System.Windows;
 using Microsoft.Web.WebView2.Core;
 using Treemap.Core.Bridge;
 using Treemap.Core.Specs;
+using Treemap.Core.Storage;
+using Treemap.Core.Storage.Cleanup;
 
 namespace Treemap.App.Services;
 
@@ -22,6 +25,7 @@ public sealed class WebBridge : IDisposable
         _monitoring = monitoring;
 
         _router.Register("specs.get", async () => await specs.GetAsync());
+        new StorageBridge(new StorageSession(), new ShellRecycler(), new ShellLauncher(), PostEvent).Register(_router);
 
         _webView.WebMessageReceived += OnMessage;
         _monitoring.Updated += OnMetrics;
@@ -52,7 +56,22 @@ public sealed class WebBridge : IDisposable
     {
         if (_monitoring.Latest is { } snapshot)
         {
-            _webView.PostWebMessageAsString(BridgeRouter.EventJson("metrics", snapshot));
+            PostEvent("metrics", snapshot);
+        }
+    }
+
+    /// <summary>Events may come from scan threads; WebView2 only accepts messages on the UI thread.</summary>
+    private void PostEvent(string type, object? payload)
+    {
+        var json = BridgeRouter.EventJson(type, payload);
+        var dispatcher = Application.Current?.Dispatcher;
+        if (dispatcher is null || dispatcher.CheckAccess())
+        {
+            _webView.PostWebMessageAsString(json);
+        }
+        else
+        {
+            dispatcher.BeginInvoke(() => _webView.PostWebMessageAsString(json));
         }
     }
 }
