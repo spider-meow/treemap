@@ -1,0 +1,148 @@
+.delete-dialog {
+  width: min(44rem, calc(100vw - 2 * var(--space-5)));
+  max-height: calc(100vh - 2 * var(--space-5));
+  padding: 0;
+  border: var(--rule);
+  border-radius: var(--radius);
+  background: var(--cream);
+  color: var(--ink);
+  overflow: hidden;
+}
+
+.delete-dialog[open] {
+  display: flex;
+  flex-direction: column;
+  animation: dialog-in var(--dur) var(--ease-out-expo);
+}
+
+.delete-dialog::backdrop {
+  background: color-mix(in srgb, var(--forest-deep) 62%, transparent);
+  animation: backdrop-in var(--dur) var(--ease-out);
+}
+
+@keyframes dialog-in {
+  from {
+    opacity: 0;
+    transform: translateY(1.25rem);
+  }
+}
+
+@keyframes backdrop-in {
+  from {
+    opacity: 0;
+  }
+}
+
+.delete-dialog__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: var(--space-5) var(--space-6) var(--space-5);
+  overflow-y: auto;
+}
+
+.delete-dialog__title {
+  font-size: var(--text-xl);
+  font-weight: 800;
+  font-stretch: 75%;
+  line-height: 1.1;
+  padding-bottom: var(--space-3);
+  border-bottom: var(--rule);
+}
+
+.delete-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  max-height: 20rem;
+  overflow-y: auto;
+}
+
+.delete-item {
+  padding: var(--space-3) var(--space-4);
+  border: var(--rule);
+  background: var(--cream-deep);
+}
+
+.delete-item--uninstallOnly {
+  background: var(--forest);
+  color: var(--on-forest);
+}
+
+.delete-item--blocked {
+  border-style: dashed;
+  background: var(--cream);
+}
+
+.delete-item__head {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-4);
+  font-weight: 700;
+}
+
+.delete-item__name {
+  overflow-wrap: anywhere;
+}
+
+.delete-item__path {
+  margin-top: var(--space-1);
+  font-size: var(--text-xs);
+  overflow-wrap: anywhere;
+  opacity: 0.85;
+}
+
+.delete-item__note {
+  margin-top: var(--space-2);
+  font-size: var(--text-sm);
+}
+
+.delete-item__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-top: var(--space-3);
+}
+
+.delete-dialog__assurance {
+  font-size: var(--text-sm);
+  color: var(--ink-soft);
+}
+
+.delete-dialog__assurance--stop {
+  color: var(--alert-text);
+  font-weight: 650;
+}
+
+.delete-dialog__done {
+  font-size: var(--text-lg);
+  font-weight: 600;
+}
+
+.delete-dialog__confirm {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  font-size: var(--text-sm);
+}
+
+.delete-dialog__confirm input {
+  min-height: 2.75rem;
+  padding: 0 var(--space-3);
+  border: var(--rule);
+  border-radius: var(--radius);
+  background: var(--cream);
+  color: var(--ink);
+  font: inherit;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.delete-dialog__footer {
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  padding-top: var(--space-4);
+  border-top: var(--hairline);
+}

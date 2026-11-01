@@ -5,6 +5,7 @@ import { useMetrics } from './hooks/useMetrics'
 import { useSpecs } from './hooks/useSpecs'
 import { ComingPage } from './pages/ComingPage'
 import { ComposantsPage } from './pages/ComposantsPage'
+import { StockagePage } from './pages/StockagePage'
 import './shell.css'
 
 const EASE = [0.25, 1, 0.5, 1] as const
@@ -12,7 +13,7 @@ const PAGES: readonly PageId[] = ['composants', 'stockage', 'moniteur', 'jeu']
 
 /** The host can open a given screen through the URL hash (#stockage); anything else lands on Composants. */
 function pageFromHash(): PageId {
-  const wanted = window.location.hash.replace('#', '')
+  const wanted = window.location.hash.replace('#', '').split('?')[0]
   return PAGES.find((id) => id === wanted) ?? 'composants'
 }
 
@@ -44,13 +45,7 @@ export default function App() {
                   {specs && <ComposantsPage specs={specs} metrics={latest} onNavigate={setPage} />}
                 </>
               )}
-              {page === 'stockage' && (
-                <ComingPage
-                  title="Stockage"
-                  summary="Où partent les Go, et comment les récupérer sans risque."
-                  note="Cet écran est en cours de refonte dans le nouveau design. L'ancien écran Stockage reste disponible dans la version actuelle de l'application."
-                />
-              )}
+              {page === 'stockage' && <StockagePage />}
               {page === 'moniteur' && (
                 <ComingPage
                   title="Moniteur"
