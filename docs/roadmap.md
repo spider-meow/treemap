@@ -6,20 +6,27 @@ Ordre proposé. Chaque étape doit être utilisable seule.
 - [x] Nom du projet : `treemap`
 - [x] Dossier `docs/` et outillage Claude (`.claude/`)
 - [x] Choix de la stack : C# + WPF (voir architecture.md)
-- [x] SDK .NET 10 installé, solution `Treemap.slnx` créée (Core, App WPF, tests xUnit), build OK
-- [ ] Workflow : petits commits directement sur `main`, pas de PR
-- [ ] Initialisation du repo git et premier push
+- [x] SDK .NET 10 installé, solution `Treemap.slnx` créée (Core, App WPF, tests xUnit)
+- [x] Repo git initialisé et poussé, workflow : petits commits sur `main`, un push par commit, pas de PR
 
-## 1. Stockage (MVP)
-- [ ] Scan d'un dossier / d'un disque, avec progression
-- [ ] Liste des plus gros dossiers et fichiers
-- [ ] Vue treemap navigable (clic pour descendre)
-- [ ] Repérage des suspects connus (hiberfil, pagefile, WinSxS, vhdx, node_modules, caches)
-- [ ] Export / "ouvrir dans l'explorateur", sans suppression pour l'instant
+## 1. Stockage : V1 livrée
+- [x] Scan d'un dossier / d'un disque, avec progression et annulation
+- [x] Arbre des dossiers trié par taille, avec part du dossier parent
+- [x] Vue treemap navigable (clic pour descendre, "dossier parent" pour remonter)
+- [x] Repérage des suspects connus (hiberfil, pagefile, WinSxS, disques virtuels, node_modules, jeux, corbeille, caches), avec explication et conseil
+- [x] "Afficher dans l'Explorateur" (lecture seule, aucune suppression)
+- [x] Taille réelle des fichiers creux et compressés (voir storage-scan.md)
+- [ ] Relance en administrateur pour lire les dossiers système (aujourd'hui l'écart est seulement expliqué)
+- [ ] Lecture directe de la MFT pour accélérer encore le scan
+- [ ] Détection des doublons
+- [ ] Défilement automatique de l'arbre vers l'élément sélectionné
 
-## 2. Specs
-- [ ] Page récapitulative CPU / GPU / RAM / disques / Windows / BIOS
-- [ ] Copie en un clic (pour support ou revente)
+## 2. Composants : V1 livrée
+- [x] Écran récapitulatif CPU / GPU / RAM (modules) / carte mère / BIOS / disques / Windows
+- [x] Occupation des volumes avec code couleur (orange dès 80 %, rouge dès 90 %)
+- [x] Copie du résumé en texte en un clic
+- [ ] Températures et ventilateurs (LibreHardwareMonitor)
+- [ ] Santé SMART des disques
 
 ## 3. Monitoring live
 - [ ] Charge CPU/GPU, RAM, disque, réseau
