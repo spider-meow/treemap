@@ -6,7 +6,7 @@ public sealed record ScanOptions
     public int MaxFilesPerFolder { get; init; } = 20;
 
     /// <summary>Folders at this depth or shallower are scanned in parallel.</summary>
-    public int ParallelDepth { get; init; } = 2;
+    public int ParallelDepth { get; init; } = 6;
 
     public int MaxDegreeOfParallelism { get; init; } = Environment.ProcessorCount;
 }
@@ -19,12 +19,14 @@ public sealed record ScanResult(
     long FolderCount,
     long InaccessibleFolders,
     long CloudOnlyFiles,
+    long SavedBySparseOrCompressedFiles,
     TimeSpan Elapsed);
 
 /// <summary>
-/// Walks a directory tree and builds a size tree. Sizes are logical file lengths; folders reached through
-/// junctions or symbolic links are skipped (no double counting, no loops), and cloud-only files
-/// (e.g. OneDrive placeholders) count for zero because they take no local space.
+/// Walks a directory tree and builds a size tree. Sizes are file lengths, except for sparse and compressed files
+/// which count for the space they really occupy; folders reached through junctions or symbolic links are skipped
+/// (no double counting, no loops), and cloud-only files (e.g. OneDrive placeholders) count for zero because they
+/// take no local space.
 /// </summary>
 public sealed class DiskScanner
 {
@@ -66,6 +68,7 @@ public sealed class DiskScanner
             Interlocked.Read(ref state.Folders),
             Interlocked.Read(ref state.Inaccessible),
             Interlocked.Read(ref state.CloudOnly),
+            Interlocked.Read(ref state.Saved),
             started.Elapsed);
     }
 
@@ -120,7 +123,12 @@ public sealed class DiskScanner
                 }
                 else
                 {
-                    length = SafeLength(file);
+                    var logical = SafeLength(file);
+                    length = SizeOnDisk.Of(file, logical);
+                    if (length < logical)
+                    {
+                        Interlocked.Add(ref state.Saved, logical - length);
+                    }
                 }
 
                 directSize += length;
@@ -252,6 +260,7 @@ public sealed class DiskScanner
         public long Folders;
         public long Inaccessible;
         public long CloudOnly;
+        public long Saved;
         private long _files;
         private long _bytes;
 
