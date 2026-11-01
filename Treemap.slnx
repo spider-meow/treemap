@@ -1,0 +1,9 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Treemap.App/Treemap.App.csproj" />
+    <Project Path="src/Treemap.Core/Treemap.Core.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Treemap.Core.Tests/Treemap.Core.Tests.csproj" />
+  </Folder>
+</Solution>
