@@ -1,0 +1,71 @@
+.volume {
+  display: grid;
+  grid-template-columns: 3.5rem minmax(10rem, 1fr) auto auto;
+  align-items: center;
+  gap: var(--space-4);
+  margin-bottom: var(--space-6);
+}
+
+.volume__name {
+  font-stretch: 75%;
+  font-weight: 850;
+  font-size: var(--text-xl);
+}
+
+.volume__detail {
+  display: flex;
+  gap: var(--space-4);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.volume__share {
+  color: var(--ink-soft);
+  font-weight: 450;
+}
+
+.sheet {
+  container-type: inline-size;
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: var(--space-5);
+  align-items: stretch;
+}
+
+/* The sheet follows the width of the workspace, not the window: plates regroup before they get cramped. */
+@container (max-width: 860px) {
+  .plate--span-4 {
+    grid-column: span 6;
+  }
+
+  .plate--span-5,
+  .plate--span-7,
+  .plate--span-8 {
+    grid-column: span 12;
+  }
+}
+
+@container (max-width: 520px) {
+  .plate--span-4,
+  .plate--span-6 {
+    grid-column: span 12;
+  }
+}
+
+@media (max-width: 1180px) {
+  .volume {
+    grid-template-columns: 3.5rem minmax(0, 1fr);
+  }
+
+  .volume__detail,
+  .volume .button {
+    grid-column: 2;
+    justify-self: start;
+  }
+}
+
+.warnings {
+  margin-top: var(--space-5);
+  color: var(--alert-text);
+  font-weight: 600;
+}

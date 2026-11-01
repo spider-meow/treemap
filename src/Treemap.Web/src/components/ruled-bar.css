@@ -1,0 +1,59 @@
+.ruled-bar {
+  position: relative;
+  height: 1.5rem;
+  border: var(--rule);
+  background: var(--cream);
+  overflow: hidden;
+}
+
+.ruled-bar__fill {
+  position: absolute;
+  inset: 0;
+  background: var(--forest);
+  transform-origin: left center;
+  transition: transform var(--dur-slow) var(--ease-out-expo);
+}
+
+/* Orange is the "pay attention" fill, reserved for values that deserve it. */
+.ruled-bar[data-level='high'] .ruled-bar__fill {
+  background: var(--mandarin);
+}
+
+/* Graduations every 10 %, drawn as thin ink lines over the fill. */
+.ruled-bar__ticks {
+  position: absolute;
+  inset: 0;
+  background-image: repeating-linear-gradient(
+    to right,
+    transparent 0,
+    transparent calc(10% - 2px),
+    var(--ink) calc(10% - 2px),
+    var(--ink) 10%
+  );
+  opacity: 0.55;
+}
+
+.ruled-bar--on-forest {
+  border-color: var(--on-forest);
+  background: var(--forest-deep);
+  height: 1.125rem;
+}
+
+.ruled-bar--on-forest .ruled-bar__fill {
+  background: var(--crest);
+}
+
+.ruled-bar--on-forest[data-level='high'] .ruled-bar__fill {
+  background: var(--mandarin);
+}
+
+.ruled-bar--on-forest .ruled-bar__ticks {
+  background-image: repeating-linear-gradient(
+    to right,
+    transparent 0,
+    transparent calc(10% - 2px),
+    var(--forest-deep) calc(10% - 2px),
+    var(--forest-deep) 10%
+  );
+  opacity: 0.7;
+}

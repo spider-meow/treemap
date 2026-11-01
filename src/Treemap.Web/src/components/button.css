@@ -1,0 +1,67 @@
+.button {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 2.75rem;
+  padding: 0 var(--space-5);
+  border: var(--rule);
+  border-radius: var(--radius);
+  font-size: var(--text-md);
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  transition:
+    background-color var(--dur-fast) var(--ease-out),
+    color var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out);
+}
+
+.button svg {
+  width: 1.125rem;
+  height: 1.125rem;
+  stroke-width: 2.25;
+  flex: none;
+}
+
+.button:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+.button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+/* Mandarin is a fill: text on it is ink (4.7:1), never cream. */
+.button--primary {
+  background: var(--mandarin);
+  color: var(--ink);
+}
+
+.button--primary:hover:not(:disabled) {
+  background: var(--ink);
+  color: var(--mandarin);
+}
+
+.button--secondary {
+  background: var(--cream);
+  color: var(--ink);
+}
+
+.button--secondary:hover:not(:disabled) {
+  background: var(--ink);
+  color: var(--cream);
+}
+
+.button--quiet {
+  border-color: transparent;
+  background: transparent;
+  padding: 0 var(--space-2);
+  text-decoration: underline;
+  text-decoration-thickness: var(--rule-width);
+  text-underline-offset: 0.25em;
+}
+
+.button--quiet:hover:not(:disabled) {
+  background: var(--crest);
+}

@@ -1,0 +1,32 @@
+.app {
+  display: grid;
+  grid-template-columns: var(--rail-width) minmax(0, 1fr);
+  height: 100%;
+}
+
+.workspace {
+  min-width: 0;
+  overflow-y: auto;
+  padding: var(--space-6) var(--space-7) var(--space-8);
+}
+
+.workspace__page {
+  max-width: 96rem;
+}
+
+.status {
+  font-size: var(--text-lg);
+  font-weight: 600;
+}
+
+.status--error {
+  color: var(--alert-text);
+}
+
+.coming {
+  max-width: 60ch;
+  padding: var(--space-5);
+  border: var(--rule);
+  background: var(--cream-deep);
+  font-size: var(--text-lg);
+}

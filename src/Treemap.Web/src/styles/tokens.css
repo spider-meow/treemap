@@ -1,0 +1,58 @@
+/*
+ * Design tokens: industrial catalogue sheet.
+ * Contrast measured (WCAG): ink on cream 13.3, ink-soft on cream 6.5, cream on forest 7.0,
+ * on-forest-soft on forest 5.1, crest on forest 6.4, ink on mandarin 4.7, alert on cream 5.7.
+ * Mandarin is never text (2.9 on cream, 2.4 on forest): it is a fill with ink text, or a rule.
+ * Crest is never used on cream (1.1): only on forest or ink.
+ */
+:root {
+  /* Ground and ink */
+  --cream: #f4f1e1;
+  --cream-deep: #e8e4cc;
+  --ink: #0d2b24;
+  --ink-soft: #3b5c52;
+
+  /* Colour fields */
+  --forest: #015d47;
+  --forest-deep: #013b2f;
+  --on-forest: #f4f1e1;
+  --on-forest-soft: #b9d6c9;
+  --crest: #e0f354;
+  --mandarin: #fd550a;
+  --alert-text: #b42a00;
+
+  /* Rules */
+  --rule-width: 2px;
+  --rule: var(--rule-width) solid var(--ink);
+  --hairline: 1px solid color-mix(in srgb, var(--ink) 35%, transparent);
+
+  /* Type: one grotesque, two voices (normal width for reading, condensed heavy for index numerals) */
+  --font: 'Archivo Variable', 'Segoe UI', system-ui, sans-serif;
+  --text-xs: 0.75rem;
+  --text-sm: 0.8125rem;
+  --text-md: 0.9375rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.5rem;
+  --text-title: clamp(2.5rem, 3.4vw + 1rem, 4rem);
+  --text-numeral: clamp(5rem, 6vw + 2rem, 8rem);
+
+  /* Space (4px base) */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 3rem;
+  --space-8: 4rem;
+
+  --radius: 2px;
+  --rail-width: 15.5rem;
+
+  /* Motion: exponential ease-out, nothing bounces */
+  --ease-out: cubic-bezier(0.25, 1, 0.5, 1);
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --dur-fast: 160ms;
+  --dur: 280ms;
+  --dur-slow: 360ms;
+}
