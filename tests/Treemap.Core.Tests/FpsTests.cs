@@ -90,6 +90,84 @@ public class FpsTests
     }
 
     [Fact]
+    public void Monitor_FindsFramesDrawnByAChildProcess()
+    {
+        // Chromium-style: the window belongs to process 10, the GPU process 11 (its child) draws the frames.
+        var source = new FakeSource(new FpsSourceState(FpsStatus.Running));
+        using var monitor = new FpsMonitor(
+            source,
+            foregroundProcessId: () => 10,
+            descendants: pid => pid == 10 ? [11, 12] : []);
+        monitor.Start();
+
+        for (var i = 0; i < 40; i++)
+        {
+            source.Emit(11);
+            source.Emit(99); // unrelated process, must be ignored
+        }
+
+        source.Emit(12);
+
+        var reading = monitor.GetCurrent();
+        Assert.NotNull(reading);
+        Assert.Equal(11, reading.ProcessId); // the busiest of the foreground app's processes
+    }
+
+    [Fact]
+    public void Monitor_PrefersTheForegroundProcessOwnFrames()
+    {
+        var source = new FakeSource(new FpsSourceState(FpsStatus.Running));
+        using var monitor = new FpsMonitor(source, foregroundProcessId: () => 10, descendants: _ => [11]);
+        monitor.Start();
+
+        source.Emit(10);
+        for (var i = 0; i < 50; i++)
+        {
+            source.Emit(11);
+        }
+
+        Assert.Equal(10, monitor.GetCurrent()!.ProcessId);
+    }
+
+    [Fact]
+    public void ProcessTree_FollowsParentLinksAtAnyDepth()
+    {
+        var parentOf = new Dictionary<int, int> { [2] = 1, [3] = 2, [4] = 2, [5] = 3, [9] = 8 };
+
+        var found = ProcessTree.Descendants(1, parentOf);
+
+        Assert.Equal([2, 3, 4, 5], found.Order());
+        Assert.DoesNotContain(9, found);
+    }
+
+    [Fact]
+    public void ProcessTree_SurvivesAParentLoop()
+    {
+        // A recycled process id can make two entries claim each other as parent.
+        var parentOf = new Dictionary<int, int> { [1] = 2, [2] = 1 };
+
+        Assert.Equal([2], ProcessTree.Descendants(1, parentOf));
+    }
+
+    [Fact]
+    public void ProcessTree_SeesARealChildProcess()
+    {
+        using var child = System.Diagnostics.Process.Start(
+            new System.Diagnostics.ProcessStartInfo("cmd.exe", "/c ping -n 4 127.0.0.1 >nul") { CreateNoWindow = true, UseShellExecute = false })!;
+        try
+        {
+            Assert.Contains(child.Id, ProcessTree.Descendants(Environment.ProcessId));
+        }
+        finally
+        {
+            if (!child.HasExited)
+            {
+                child.Kill(entireProcessTree: true);
+            }
+        }
+    }
+
+    [Fact]
     public void Monitor_WithNoFrames_ReportsNothing()
     {
         var source = new FakeSource(new FpsSourceState(FpsStatus.Running));

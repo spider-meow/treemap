@@ -29,19 +29,27 @@ public sealed record FpsReading(int ProcessId, string ProcessName, double Fps);
 /// <summary>
 /// Reports the frame rate of the application in the foreground, which is what an in-game overlay wants:
 /// the desktop compositor presents at the refresh rate all the time and must not be mistaken for a game.
+/// The foreground application counts together with the processes it started: browsers and other Chromium-based
+/// apps own the window in one process but draw the frames in a child (the GPU process).
 /// </summary>
 public sealed class FpsMonitor : IDisposable
 {
     private readonly IPresentSource _source;
     private readonly FrameRateCounter _counter;
     private readonly Func<int?> _foregroundProcessId;
+    private readonly Func<int, IReadOnlyList<int>> _descendants;
     private readonly Stopwatch _clock = Stopwatch.StartNew();
 
-    public FpsMonitor(IPresentSource source, FrameRateCounter? counter = null, Func<int?>? foregroundProcessId = null)
+    public FpsMonitor(
+        IPresentSource source,
+        FrameRateCounter? counter = null,
+        Func<int?>? foregroundProcessId = null,
+        Func<int, IReadOnlyList<int>>? descendants = null)
     {
         _source = source;
         _counter = counter ?? new FrameRateCounter();
         _foregroundProcessId = foregroundProcessId ?? ForegroundWindow.GetProcessId;
+        _descendants = descendants ?? ProcessTree.Descendants;
     }
 
     public FpsSourceState State { get; private set; } = new(FpsStatus.NotStarted);
@@ -69,8 +77,25 @@ public sealed class FpsMonitor : IDisposable
             return null;
         }
 
-        var fps = _counter.GetFps(pid, _clock.Elapsed.TotalSeconds);
-        return fps > 0 ? new FpsReading(pid, ProcessName(pid), fps) : null;
+        var now = _clock.Elapsed.TotalSeconds;
+        var ownFps = _counter.GetFps(pid, now);
+        if (ownFps > 0)
+        {
+            return new FpsReading(pid, ProcessName(pid), ownFps);
+        }
+
+        // Nothing from the window's own process: look at what it started, and keep the busiest renderer.
+        FpsReading? best = null;
+        foreach (var child in _descendants(pid))
+        {
+            var fps = _counter.GetFps(child, now);
+            if (fps > (best?.Fps ?? 0))
+            {
+                best = new FpsReading(child, ProcessName(child), fps);
+            }
+        }
+
+        return best;
     }
 
     public void Dispose()
