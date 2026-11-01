@@ -14,7 +14,8 @@ Ordre proposé. Chaque étape doit être utilisable seule.
 - [x] Hébergement WebView2 et pont vers le moteur (`--web`, `--dev`)
 - [x] Écran Composants refait, branché sur le vrai moteur (specs et mesures en direct)
 - [ ] Écran Moniteur refait
-- [ ] Écran Stockage refait, avec suppression sécurisée (corbeille, dossiers système protégés, aperçu, confirmation ; désinstallation guidée des jeux par leur lanceur)
+- [x] Écran Stockage refait, avec suppression sécurisée (corbeille, dossiers système protégés, aperçu, confirmation ; désinstallation guidée des jeux par leur lanceur), voir [storage-cleanup.md](storage-cleanup.md)
+- [ ] Stockage : vider la Corbeille depuis l'appli (action séparée, avec confirmation), éléments gérés dans des dossiers à chemin long, tri/filtre de la liste
 - [ ] Vue 3D des composants (cliquer un composant pour voir ses détails)
 - [ ] Réhabiller l'overlay avec la nouvelle palette
 - [ ] Retirer l'interface WPF une fois la parité atteinte, DESIGN.md et revue finale du design
