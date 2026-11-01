@@ -45,12 +45,15 @@ public sealed class MonitorViewModel : ObservableObject
 {
     private readonly MonitoringService _monitoring;
 
-    public MonitorViewModel(MonitoringService monitoring)
+    public MonitorViewModel(MonitoringService monitoring, OverlaySettingsViewModel overlay)
     {
         _monitoring = monitoring;
+        Overlay = overlay;
         Cards = [Cpu, Memory, Gpu, VideoMemory, Disk, Network];
         _monitoring.Updated += (_, _) => Refresh();
     }
+
+    public OverlaySettingsViewModel Overlay { get; }
 
     public MetricCardViewModel Cpu { get; } = new("Processeur", maximum: 100);
 

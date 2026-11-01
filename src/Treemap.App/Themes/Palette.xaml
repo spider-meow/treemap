@@ -13,6 +13,7 @@
     <SolidColorBrush x:Key="CardBackground" Color="{StaticResource CardBackgroundColor}" />
     <SolidColorBrush x:Key="CardBorder" Color="{StaticResource CardBorderColor}" />
     <SolidColorBrush x:Key="AccentBrush" Color="{StaticResource AccentColor}" />
+    <SolidColorBrush x:Key="AccentFillBrush" Color="#264F9DF7" />
     <SolidColorBrush x:Key="WarnBrush" Color="{StaticResource WarnColor}" />
     <SolidColorBrush x:Key="DangerBrush" Color="{StaticResource DangerColor}" />
     <SolidColorBrush x:Key="TextPrimary" Color="#E7E9ED" />

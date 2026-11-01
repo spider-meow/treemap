@@ -9,12 +9,16 @@ public sealed class MainViewModel : ObservableObject
     private readonly StartupOptions _options;
     private int _selectedTabIndex;
 
-    public MainViewModel(ISpecsProvider specsProvider, MonitoringService monitoring, StartupOptions options)
+    public MainViewModel(
+        ISpecsProvider specsProvider,
+        MonitoringService monitoring,
+        OverlaySettingsViewModel overlay,
+        StartupOptions options)
     {
         _options = options;
         Components = new ComponentsViewModel(specsProvider);
         Storage = new StorageViewModel();
-        Monitor = new MonitorViewModel(monitoring);
+        Monitor = new MonitorViewModel(monitoring, overlay);
         _selectedTabIndex = options.TabIndex;
     }
 
