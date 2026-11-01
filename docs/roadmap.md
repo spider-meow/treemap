@@ -28,15 +28,23 @@ Ordre proposé. Chaque étape doit être utilisable seule.
 - [ ] Températures et ventilateurs (LibreHardwareMonitor)
 - [ ] Santé SMART des disques
 
-## 3. Monitoring live
-- [ ] Charge CPU/GPU, RAM, disque, réseau
-- [ ] Températures
-- [ ] Historique court avec graphes
+## 3. Monitoring live : V1 livrée
+- [x] Charge CPU/GPU, RAM, VRAM, disque, réseau, avec historique de deux minutes et graphes
+- [x] Température, puissance, fréquence et ventilateur du GPU NVIDIA
+- [ ] Température du processeur (demande un pilote noyau : décision à prendre, voir monitoring.md)
+- [ ] Cartes GPU AMD et Intel
+- [ ] Historique plus long, export
 
-## 4. Overlay
-- [ ] Fenêtre transparente click-through avec métriques choisies
-- [ ] FPS via ETW
-- [ ] Raccourci pour afficher/masquer, position et style configurables
+## 4. Overlay : V1 livrée
+- [x] Fenêtre transparente, au premier plan, click-through, sans prise de focus
+- [x] Lignes au choix, coin de l'écran, opacité, réglages sauvegardés
+- [x] Raccourci global Ctrl+Alt+F10
+- [x] FPS via événements ETW (DirectX 9 à 12), relance en administrateur proposée
+- [ ] **Valider la capture FPS réelle en administrateur avec un jeu** (non testé, voir monitoring.md)
+- [ ] FPS pour Vulkan et OpenGL
+- [ ] Temps de frame et 1 % bas
+- [ ] Raccourci personnalisable
+- [ ] Icône dans la zone de notification pour garder l'overlay actif fenêtre fermée
 
 ## 5. Optimisation
 - [ ] Programmes au démarrage (lecture, puis activation/désactivation avec confirmation)

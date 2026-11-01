@@ -15,8 +15,8 @@ Choisi le 2026-11-01. Machine cible : Windows 11, RTX 3060, i5-10400F, disque C:
 ## Briques techniques
 
 - **Specs** : WMI via `System.Management` (`Win32_Processor`, `Win32_VideoController`, `Win32_PhysicalMemory`, `MSFT_PhysicalDisk`...). Mémoire vidéo lue dans le registre (WMI plafonne `AdapterRAM` à 4 Go). Chaque section échoue indépendamment dans une liste d'avertissements.
-- **Capteurs** : LibreHardwareMonitor (températures, charges, ventilos). NVML pour les finesses NVIDIA si besoin.
-- **FPS** : ETW (providers DXGI/D3D9 Present, comme PresentMon). Demande les droits admin, sans injection.
+- **Capteurs** : kernel32, compteurs de performance et NVML (GPU NVIDIA), sans droits administrateur ni pilote. LibreHardwareMonitor est écarté pour l'instant car il charge un pilote noyau (voir [monitoring.md](monitoring.md)).
+- **FPS** : ETW (providers DXGI et D3D9, événement Present, comme PresentMon) via `Microsoft.Diagnostics.Tracing.TraceEvent`. Demande les droits administrateur, aucune injection.
 - **Scan disque** : parcours récursif parallèle (`DiskScanner`), taille réelle des fichiers creux/compressés, voir [storage-scan.md](storage-scan.md). Lecture directe de la MFT (façon WizTree) en amélioration ultérieure (droits admin).
 - **Treemap** : algorithme squarified dans `Treemap.Core` (pur, testé), rendu par un contrôle WPF maison (`TreemapControl`, `DrawingContext`), 600 cellules maximum, petits fichiers regroupés.
 - **Interface** : WPF avec le thème Fluent sombre intégré (`ThemeMode="Dark"`, encore marqué expérimental), MVVM minimal sans bibliothèque externe, palette neutre avec un seul accent (`Themes/Palette.xaml`).
@@ -34,12 +34,16 @@ treemap/
       Layout/            treemap squarified
       Storage/           scanner, arbre, détecteur de suspects
       Specs/             lecture WMI, résumé texte
+      Monitoring/        mesures en direct, historique, contenu de l'overlay
+        Fps/             comptage de FPS, source ETW
+      Settings/          réglages (JSON)
     Treemap.App/       interface WPF, référence Core
       Controls/          TreemapControl
-      ViewModels/        Main, Components, Storage
-      Views/             ComponentsView, StorageView
+      ViewModels/        Main, Components, Storage, Monitor, OverlaySettings
+      Views/             ComponentsView, StorageView, MonitorView
+      Services/          MonitoringService, OverlayController, GlobalHotkey, AdminRelauncher
+      OverlayWindow      fenêtre overlay (dans le projet App, pas de projet séparé)
       Themes/            palette
-    Treemap.Overlay/   fenêtre overlay                                    [à venir]
   tests/
     Treemap.Core.Tests/   xUnit, référence Core
   .claude/         skills, agents et commandes Claude (voir tooling.md)
