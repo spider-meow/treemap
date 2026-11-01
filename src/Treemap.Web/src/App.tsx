@@ -8,9 +8,16 @@ import { ComposantsPage } from './pages/ComposantsPage'
 import './shell.css'
 
 const EASE = [0.25, 1, 0.5, 1] as const
+const PAGES: readonly PageId[] = ['composants', 'stockage', 'moniteur', 'jeu']
+
+/** The host can open a given screen through the URL hash (#stockage); anything else lands on Composants. */
+function pageFromHash(): PageId {
+  const wanted = window.location.hash.replace('#', '')
+  return PAGES.find((id) => id === wanted) ?? 'composants'
+}
 
 export default function App() {
-  const [page, setPage] = useState<PageId>('composants')
+  const [page, setPage] = useState<PageId>(pageFromHash)
   const { specs, loading, error } = useSpecs()
   const { latest } = useMetrics()
 
