@@ -11,4 +11,4 @@ Appli perso d'optimisation et de monitoring de PC (Windows 11). Repo : https://g
 
 ## Statut
 
-Phase de cadrage. Aucun code applicatif pour l'instant, la stack n'est pas encore tranchée.
+Phase de cadrage. Stack choisie : C# + WPF (.NET LTS). Aucun code applicatif pour l'instant.

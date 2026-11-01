@@ -5,7 +5,8 @@ Ordre proposé. Chaque étape doit être utilisable seule.
 ## 0. Cadrage
 - [x] Nom du projet : `treemap`
 - [x] Dossier `docs/` et outillage Claude (`.claude/`)
-- [ ] Choix de la stack
+- [x] Choix de la stack : C# + WPF (voir architecture.md)
+- [ ] Installer le SDK .NET 10 et créer la solution
 - [ ] Initialisation du repo git et premier push
 
 ## 1. Stockage (MVP)

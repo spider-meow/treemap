@@ -1,14 +1,16 @@
-# Architecture (proposition, à valider)
+# Architecture
 
-> Rien n'est figé. Cette page sert de base de discussion avant d'écrire du code.
+## Décision : C# + WPF (.NET LTS)
 
-## Stack
+Choisi le 2026-11-01. Machine cible : Windows 11, RTX 3060, i5-10400F, disque C: presque plein (≈105 Go libres), donc on évite les chaînes d'outils lourdes.
 
-| Option | Pour | Contre |
-|---|---|---|
-| **C# + WPF/WinUI** (recommandée) | LibreHardwareMonitor donne les températures CPU/GPU facilement ; overlay transparent simple ; WMI natif | Moins familier si on vient du web |
-| Tauri (Rust + web) | UI web, binaire léger | Capteurs matériels plus pénibles à brancher |
-| Electron | UI web, écosystème | Lourd, mauvais fit pour un outil "léger" |
+| Option | Pour | Contre | Verdict |
+|---|---|---|---|
+| **C# + WPF** | LibreHardwareMonitor pour les températures ; overlay transparent simple ; WMI et ETW natifs ; SDK ≈ 1 Go | Moins familier qu'une stack web | **Retenue** |
+| Tauri (Rust + web) | UI web, binaire léger | Rust + Build Tools VS = 6 à 10 Go ; capteurs à brancher à la main | Écartée |
+| Electron | Node déjà installé, UI web | Lourd en RAM, contradictoire pour un outil de monitoring ; FPS via PresentMon externe | Écartée |
+
+État de l'environnement au moment du choix : Node 24 et Python 3.13 présents ; seuls les runtimes .NET 8 (Core + Desktop) sont installés, **pas de SDK**. SDK cible : .NET 10 (LTS), paquet winget `Microsoft.DotNet.SDK.10`.
 
 ## Briques techniques
 
@@ -34,6 +36,5 @@ treemap/
 
 ## Questions ouvertes
 
-- Stack définitive (C# vs Tauri) ?
 - Fenêtre classique ou icône dans la barre système + panneau ?
 - GPU de la machine (NVIDIA / AMD / intégré) et jeux visés (anti-cheat ou non) ?
