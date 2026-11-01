@@ -1,4 +1,3 @@
-using System.Windows;
 using Microsoft.Web.WebView2.Core;
 using Treemap.Core.Bridge;
 using Treemap.Core.Specs;
@@ -23,11 +22,6 @@ public sealed class WebBridge : IDisposable
         _monitoring = monitoring;
 
         _router.Register("specs.get", async () => await specs.GetAsync());
-        _router.Register("specs.copySummary", async () =>
-        {
-            Clipboard.SetText(SpecsSummary.ToPlainText(await specs.GetAsync()));
-            return null;
-        });
 
         _webView.WebMessageReceived += OnMessage;
         _monitoring.Updated += OnMetrics;

@@ -104,8 +104,6 @@ async function mockRequest(type: string): Promise<unknown> {
   switch (type) {
     case 'specs.get':
       return mockSpecs satisfies SystemSpecs
-    case 'specs.copySummary':
-      return null
     default:
       throw new Error(`Moteur indisponible hors de l'application : ${type}`)
   }
