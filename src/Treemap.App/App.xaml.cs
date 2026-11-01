@@ -25,8 +25,21 @@ public partial class App : Application
         _overlay = new OverlayController(_monitoring, new SettingsStore(), Dispatcher);
         _hotkey = new GlobalHotkey(_overlay.Toggle);
 
+        var specs = new WmiSpecsProvider();
+
+        // The web interface replaces the WPF one screen by screen; until it has parity it is opt-in (--web / --dev).
+        if (options.UseWeb)
+        {
+            var webWindow = new WebHostWindow(specs, _monitoring, options);
+            _hotkey.Register(webWindow);
+            webWindow.Show();
+            _monitoring.Start();
+            _overlay.Start();
+            return;
+        }
+
         var overlaySettings = new OverlaySettingsViewModel(_overlay, () => _hotkey.IsRegistered);
-        var viewModel = new MainViewModel(new WmiSpecsProvider(), _monitoring, overlaySettings, options);
+        var viewModel = new MainViewModel(specs, _monitoring, overlaySettings, options);
         var window = new MainWindow { DataContext = viewModel };
 
         // Registered before the window is shown so the settings card reads the real state on first display.

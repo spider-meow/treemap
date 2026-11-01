@@ -4,6 +4,15 @@
     <ProjectReference Include="..\Treemap.Core\Treemap.Core.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.4314.35" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- The built web interface (npm run build in src/Treemap.Web) travels next to the executable. -->
+    <Content Include="..\Treemap.Web\dist\**\*" Link="web\%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net10.0-windows</TargetFramework>

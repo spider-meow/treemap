@@ -1,0 +1,12 @@
+<Window x:Class="Treemap.App.WebHostWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:wv2="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"
+        Title="treemap"
+        Width="1360" Height="860"
+        MinWidth="960" MinHeight="620"
+        Background="#F4F1E1"
+        ThemeMode="None"
+        WindowStartupLocation="CenterScreen">
+    <wv2:WebView2 x:Name="Web" />
+</Window>
