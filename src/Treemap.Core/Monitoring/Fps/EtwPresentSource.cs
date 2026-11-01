@@ -38,6 +38,8 @@ public sealed class EtwPresentSource : IPresentSource
                 "Le FPS se mesure avec les événements de Windows, réservés aux administrateurs.");
         }
 
+        StopStaleSessions();
+
         try
         {
             _session = new TraceEventSession(_sessionName) { StopOnDispose = true };
@@ -63,6 +65,29 @@ public sealed class EtwPresentSource : IPresentSource
         _session = null;
         _thread?.Join(TimeSpan.FromSeconds(2));
         _thread = null;
+    }
+
+    /// <summary>
+    /// An event session outlives the process that opened it. If the app crashed earlier, its session is still
+    /// running and costing CPU, so stop any leftover session carrying our name prefix.
+    /// </summary>
+    private void StopStaleSessions()
+    {
+        try
+        {
+            foreach (var name in TraceEventSession.GetActiveSessionNames())
+            {
+                if (name.StartsWith("treemap-fps-", StringComparison.Ordinal) && name != _sessionName)
+                {
+                    using var stale = new TraceEventSession(name, TraceEventSessionOptions.Attach);
+                    stale.Stop();
+                }
+            }
+        }
+        catch (Exception)
+        {
+            // Best-effort housekeeping: failing to clean up an old session must never prevent a new one.
+        }
     }
 
     private void OnEvent(TraceEvent data)
