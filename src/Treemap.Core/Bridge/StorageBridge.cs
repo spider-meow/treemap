@@ -13,6 +13,9 @@ public interface IShellLauncher
 
     /// <summary>Starts a launcher address; callers only pass addresses accepted by <see cref="DeletionAdvisor.IsSafeLauncherUri"/>.</summary>
     void OpenUri(string uri);
+
+    /// <summary>Opens the Windows Recycle Bin folder.</summary>
+    void OpenRecycleBin();
 }
 
 public sealed record DriveDto(string Path, string Label, long TotalBytes, long FreeBytes);
@@ -110,6 +113,11 @@ public sealed class StorageBridge
         {
             var node = Require(Read<PathRequest>(p).Path);
             _launcher.Reveal(node.FullPath);
+            return Task.FromResult<object?>(null);
+        });
+        router.Register("storage.openRecycleBin", () =>
+        {
+            _launcher.OpenRecycleBin();
             return Task.FromResult<object?>(null);
         });
         router.Register("storage.openUninstaller", p =>

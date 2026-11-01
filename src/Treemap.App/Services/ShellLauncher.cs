@@ -15,4 +15,7 @@ public sealed class ShellLauncher : IShellLauncher
 
     public void OpenUri(string uri) =>
         Process.Start(new ProcessStartInfo(uri) { UseShellExecute = true });
+
+    public void OpenRecycleBin() =>
+        Process.Start(new ProcessStartInfo("explorer.exe", "shell:RecycleBinFolder") { UseShellExecute = false });
 }

@@ -24,6 +24,7 @@ public partial class WebHostWindow : Window
     private static readonly string[] Pages = ["composants", "stockage", "moniteur"];
 
     private readonly string _startPage;
+    private readonly string? _scanPath;
 
     public WebHostWindow(ISpecsProvider specs, MonitoringService monitoring, StartupOptions options)
     {
@@ -32,6 +33,7 @@ public partial class WebHostWindow : Window
         _monitoring = monitoring;
         _dev = options.DevServer;
         _startPage = Pages[Math.Clamp(options.TabIndex, 0, Pages.Length - 1)];
+        _scanPath = options.ScanPath;
         Loaded += async (_, _) => await InitializeWebAsync();
         Closed += (_, _) => _bridge?.Dispose();
     }
@@ -80,7 +82,8 @@ public partial class WebHostWindow : Window
         };
 
         _bridge = new WebBridge(core, origin, _specs, _monitoring);
-        core.Navigate($"{origin}/index.html#{_startPage}");
+        var hash = _scanPath is null ? _startPage : $"{_startPage}?scan={Uri.EscapeDataString(_scanPath)}";
+        core.Navigate($"{origin}/index.html#{hash}");
     }
 
     private void Fail(string message) =>

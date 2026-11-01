@@ -27,6 +27,13 @@ public sealed class WebBridge : IDisposable
         _router.Register("specs.get", async () => await specs.GetAsync());
         new StorageBridge(new StorageSession(), new ShellRecycler(), new ShellLauncher(), PostEvent).Register(_router);
 
+        // Runs on the UI thread (messages arrive there), which the dialog needs.
+        _router.Register("storage.pickFolder", () =>
+        {
+            var dialog = new Microsoft.Win32.OpenFolderDialog { Title = "Choisir un dossier à analyser" };
+            return Task.FromResult<object?>(dialog.ShowDialog() == true && dialog.FolderName.Length > 0 ? dialog.FolderName : null);
+        });
+
         _webView.WebMessageReceived += OnMessage;
         _monitoring.Updated += OnMetrics;
     }

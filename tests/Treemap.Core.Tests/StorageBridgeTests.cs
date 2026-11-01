@@ -28,6 +28,10 @@ public class StorageBridgeTests : IDisposable
         public void Reveal(string path) => Revealed.Add(path);
 
         public void OpenUri(string uri) => Opened.Add(uri);
+
+        public int RecycleBinOpened { get; private set; }
+
+        public void OpenRecycleBin() => RecycleBinOpened++;
     }
 
     private readonly string _root = Path.Combine(Path.GetTempPath(), "treemap-bridge-" + Guid.NewGuid().ToString("N"));
@@ -183,6 +187,14 @@ public class StorageBridgeTests : IDisposable
         var deleted = await Ok("storage.delete", new { paths = new[] { game } });
         Assert.True(deleted.GetProperty("refused").GetBoolean());
         Assert.Empty(_recycler.Recycled);
+    }
+
+    [Fact]
+    public async Task OpenRecycleBin_AsksTheLauncher()
+    {
+        await Ok("storage.openRecycleBin");
+
+        Assert.Equal(1, _launcher.RecycleBinOpened);
     }
 
     [Fact]
