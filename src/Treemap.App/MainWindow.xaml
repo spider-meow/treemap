@@ -10,5 +10,8 @@
         <TabItem Header="Composants">
             <views:ComponentsView DataContext="{Binding Components}" Margin="0,16,0,0" />
         </TabItem>
+        <TabItem Header="Stockage">
+            <views:StorageView DataContext="{Binding Storage}" Margin="0,16,0,0" />
+        </TabItem>
     </TabControl>
 </Window>
