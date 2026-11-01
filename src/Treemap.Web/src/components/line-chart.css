@@ -1,0 +1,76 @@
+.line-chart {
+  position: relative;
+  flex: 1 1 11rem;
+  width: 100%;
+  min-height: 11rem;
+}
+
+/* Drawn over the box rather than inside it, so the chart takes whatever height the plate leaves it. */
+.line-chart svg {
+  position: absolute;
+  inset: 0;
+  display: block;
+  overflow: visible;
+}
+
+.line-chart__grid {
+  stroke: color-mix(in srgb, currentColor 35%, transparent);
+  stroke-width: 1;
+}
+
+.line-chart__tick {
+  fill: currentColor;
+  font-size: 11px;
+  font-weight: 550;
+  font-variant-numeric: tabular-nums;
+  opacity: 0.85;
+}
+
+.line-chart__line {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.25;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+.line-chart__line--dashed {
+  stroke-dasharray: 6 5;
+}
+
+/* The newest reading: an orange square with an ink edge, the one mark of colour on the chart. */
+.line-chart__marker {
+  fill: var(--mandarin);
+  stroke: var(--ink);
+  stroke-width: 2;
+}
+
+.line-chart__marker--hollow {
+  fill: var(--cream);
+}
+
+.on-forest .line-chart__line {
+  stroke: var(--crest);
+}
+
+.on-forest .line-chart__marker {
+  stroke: var(--on-forest);
+}
+
+.chart-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  font-size: var(--text-sm);
+  font-weight: 600;
+}
+
+.chart-legend li {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.chart-legend .line-chart__line {
+  stroke-width: 2.25;
+}

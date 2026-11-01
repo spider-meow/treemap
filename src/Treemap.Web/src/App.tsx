@@ -5,6 +5,7 @@ import { useMetrics } from './hooks/useMetrics'
 import { useSpecs } from './hooks/useSpecs'
 import { ComingPage } from './pages/ComingPage'
 import { ComposantsPage } from './pages/ComposantsPage'
+import { MoniteurPage } from './pages/MoniteurPage'
 import { StockagePage } from './pages/StockagePage'
 import './shell.css'
 
@@ -20,7 +21,7 @@ function pageFromHash(): PageId {
 export default function App() {
   const [page, setPage] = useState<PageId>(pageFromHash)
   const { specs, loading, error } = useSpecs()
-  const { latest } = useMetrics()
+  const { latest, history } = useMetrics()
 
   const systemVolume = specs?.volumes.find((v) => v.name.toUpperCase().startsWith('C:')) ?? specs?.volumes[0]
 
@@ -46,13 +47,7 @@ export default function App() {
                 </>
               )}
               {page === 'stockage' && <StockagePage />}
-              {page === 'moniteur' && (
-                <ComingPage
-                  title="Moniteur"
-                  summary="L'état du PC en direct."
-                  note="Cet écran est en cours de refonte dans le nouveau design. L'ancien écran Moniteur reste disponible dans la version actuelle de l'application."
-                />
-              )}
+              {page === 'moniteur' && <MoniteurPage latest={latest} history={history} />}
               {page === 'jeu' && (
                 <ComingPage
                   title="Jeu"

@@ -1,0 +1,48 @@
+.corner-picker {
+  position: relative;
+  width: 100%;
+  max-width: 16rem;
+  aspect-ratio: 16 / 10;
+  border: var(--rule);
+  background: var(--cream);
+}
+
+.corner-picker__spot {
+  position: absolute;
+  width: 3.25rem;
+  height: 1.75rem;
+  margin: var(--space-2);
+  padding: 0;
+  border: var(--rule);
+  background: var(--cream-deep);
+  cursor: pointer;
+  transition: background-color var(--dur-fast) var(--ease-out);
+}
+
+.corner-picker__spot:hover {
+  background: var(--mandarin);
+}
+
+.corner-picker__spot[aria-checked='true'] {
+  background: var(--ink);
+}
+
+.corner-picker__spot--topLeft {
+  top: 0;
+  left: 0;
+}
+
+.corner-picker__spot--topRight {
+  top: 0;
+  right: 0;
+}
+
+.corner-picker__spot--bottomLeft {
+  bottom: 0;
+  left: 0;
+}
+
+.corner-picker__spot--bottomRight {
+  right: 0;
+  bottom: 0;
+}

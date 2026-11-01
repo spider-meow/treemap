@@ -59,6 +59,7 @@
 }
 
 .plate__body {
+  flex: 1;
   display: flex;
   flex-direction: column;
   gap: var(--space-3);
@@ -114,4 +115,32 @@
   color: var(--ink);
   font-weight: 700;
   border: var(--rule-width) solid var(--ink);
+}
+
+.sheet {
+  container-type: inline-size;
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: var(--space-5);
+  align-items: stretch;
+}
+
+/* The sheet follows the width of the workspace, not the window: plates regroup before they get cramped. */
+@container (max-width: 860px) {
+  .plate--span-4 {
+    grid-column: span 6;
+  }
+
+  .plate--span-5,
+  .plate--span-7,
+  .plate--span-8 {
+    grid-column: span 12;
+  }
+}
+
+@container (max-width: 520px) {
+  .plate--span-4,
+  .plate--span-6 {
+    grid-column: span 12;
+  }
 }
