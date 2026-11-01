@@ -13,5 +13,8 @@
         <TabItem Header="Stockage">
             <views:StorageView DataContext="{Binding Storage}" Margin="0,16,0,0" />
         </TabItem>
+        <TabItem Header="Moniteur">
+            <views:MonitorView DataContext="{Binding Monitor}" Margin="0,16,0,0" />
+        </TabItem>
     </TabControl>
 </Window>

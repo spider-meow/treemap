@@ -2,12 +2,12 @@ namespace Treemap.App;
 
 /// <summary>
 /// Optional command-line switches, mostly handy while developing:
-/// <c>--tab=components|storage</c> opens a tab, <c>--scan=PATH</c> starts a scan of PATH (and opens the storage tab).
+/// <c>--tab=components|storage|monitor</c> opens a tab, <c>--scan=PATH</c> starts a scan of PATH (and opens the storage tab).
 /// Unknown arguments are ignored.
 /// </summary>
 public sealed record StartupOptions(int TabIndex = 0, string? ScanPath = null)
 {
-    private static readonly string[] TabNames = ["components", "storage"];
+    private static readonly string[] TabNames = ["components", "storage", "monitor"];
 
     public static StartupOptions Parse(IEnumerable<string> args)
     {
