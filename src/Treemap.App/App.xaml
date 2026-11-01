@@ -2,8 +2,15 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:Treemap.App"
-             StartupUri="MainWindow.xaml">
+             ThemeMode="Dark">
     <Application.Resources>
-         
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Themes/Palette.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+
+            <local:UsageBrushConverter x:Key="UsageBrush" />
+            <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
+        </ResourceDictionary>
     </Application.Resources>
 </Application>

@@ -10,6 +10,8 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
+    <!-- ThemeMode (Fluent dark theme) is still flagged experimental by WPF. -->
+    <NoWarn>$(NoWarn);WPF0001</NoWarn>
   </PropertyGroup>
 
 </Project>

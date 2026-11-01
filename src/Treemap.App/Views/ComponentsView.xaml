@@ -1,0 +1,93 @@
+<UserControl x:Class="Treemap.App.Views.ComponentsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <DockPanel Margin="0,0,0,16">
+            <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center">
+                <TextBlock Text="{Binding StatusText}" Style="{StaticResource Muted}"
+                           VerticalAlignment="Center" Margin="0,0,16,0" />
+                <Button Content="Copier le résumé" Command="{Binding CopySummaryCommand}" Margin="0,0,8,0" />
+                <Button Content="Actualiser" Command="{Binding RefreshCommand}" />
+            </StackPanel>
+            <StackPanel>
+                <TextBlock Text="Composants" Style="{StaticResource PageTitle}" />
+                <TextBlock Text="Ce que contient ce PC, lu directement depuis Windows." Style="{StaticResource Muted}" Margin="0,4,0,0" />
+            </StackPanel>
+        </DockPanel>
+
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+            <StackPanel>
+                <ItemsControl ItemsSource="{Binding Volumes}" Margin="0,0,0,8">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border Style="{StaticResource Card}" Width="380" Margin="0,0,16,16">
+                                <StackPanel>
+                                    <DockPanel>
+                                        <TextBlock DockPanel.Dock="Right" Text="{Binding PercentText}"
+                                                   Foreground="{StaticResource TextPrimary}" FontWeight="SemiBold" />
+                                        <TextBlock Text="{Binding Name}" Style="{StaticResource SectionTitle}" />
+                                    </DockPanel>
+                                    <TextBlock Text="{Binding Caption}" Style="{StaticResource Muted}" Margin="0,2,0,10" />
+                                    <ProgressBar Height="8" Minimum="0" Maximum="1" Value="{Binding UsedFraction, Mode=OneWay}"
+                                                 Foreground="{Binding UsedFraction, Converter={StaticResource UsageBrush}}" />
+                                    <TextBlock Text="{Binding Detail}" Foreground="{StaticResource TextPrimary}" Margin="0,10,0,0" />
+                                </StackPanel>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+                <ItemsControl ItemsSource="{Binding Sections}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border Style="{StaticResource Card}" Width="380" Margin="0,0,16,16">
+                                <StackPanel>
+                                    <TextBlock Text="{Binding Title}" Style="{StaticResource SectionTitle}" Margin="0,0,0,10" />
+                                    <ItemsControl ItemsSource="{Binding Rows}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <Grid Margin="0,0,0,6">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="130" />
+                                                        <ColumnDefinition Width="*" />
+                                                    </Grid.ColumnDefinitions>
+                                                    <TextBlock Text="{Binding Label}" Style="{StaticResource Muted}"
+                                                               TextTrimming="CharacterEllipsis" Margin="0,0,12,0" />
+                                                    <TextBlock Grid.Column="1" Text="{Binding Value}" TextWrapping="Wrap"
+                                                               Foreground="{StaticResource TextPrimary}" />
+                                                </Grid>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </StackPanel>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+                <ItemsControl ItemsSource="{Binding Warnings}" Margin="0,0,0,16">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding}" Foreground="{StaticResource WarnBrush}" TextWrapping="Wrap" Margin="0,0,0,4" />
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</UserControl>
