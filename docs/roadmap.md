@@ -13,12 +13,12 @@ Ordre proposé. Chaque étape doit être utilisable seule.
 - [x] Design system et coquille animée (palette crème / vert forêt / orange, typographie Archivo)
 - [x] Hébergement WebView2 et pont vers le moteur (`--web`, `--dev`)
 - [x] Écran Composants refait, branché sur le vrai moteur (specs et mesures en direct)
-- [ ] Écran Moniteur refait
+- [x] Écran Moniteur refait (graphiques sur deux minutes, réglages de l'overlay, état du FPS et relance en administrateur)
 - [x] Écran Stockage refait, avec suppression sécurisée (corbeille, dossiers système protégés, aperçu, confirmation ; désinstallation guidée des jeux par leur lanceur), voir [storage-cleanup.md](storage-cleanup.md)
 - [ ] Stockage : vider la Corbeille depuis l'appli (action séparée, avec confirmation), éléments gérés dans des dossiers à chemin long, tri/filtre de la liste
 - [ ] Vue 3D des composants (cliquer un composant pour voir ses détails)
 - [ ] Réhabiller l'overlay avec la nouvelle palette
-- [ ] Retirer l'interface WPF une fois la parité atteinte, DESIGN.md et revue finale du design
+- [ ] Passer l'interface web par défaut et retirer l'interface WPF (la parité des trois écrans est atteinte), DESIGN.md et revue finale du design
 
 ## 1. Stockage : V1 livrée
 - [x] Scan d'un dossier / d'un disque, avec progression et annulation

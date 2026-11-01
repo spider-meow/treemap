@@ -36,7 +36,7 @@ dotnet run --project src/Treemap.App -- --scan=C:\
 
 ### Interface web
 
-Pour l'instant les écrans Composants et Stockage (avec suppression vers la Corbeille) sont refaits dans le nouveau design ; l'interface WPF reste celle par défaut jusqu'à ce que Moniteur soit porté.
+Les écrans Composants, Stockage (avec suppression vers la Corbeille) et Moniteur (graphiques et réglages de l'overlay) existent dans le nouveau design ; l'interface WPF reste celle par défaut en attendant la décision de la retirer.
 
 ```bash
 cd src/Treemap.Web
