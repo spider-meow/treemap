@@ -1,4 +1,5 @@
 import { createMockMetrics, mockSpecs } from './mock'
+import { createMockStorage } from './mockStorage'
 import type { MetricsSnapshot, SystemSpecs } from './types'
 
 /**
@@ -65,7 +66,7 @@ function wire(): void {
 /** Asks the engine for something and waits for the answer. */
 export function request<T>(type: string, payload?: unknown): Promise<T> {
   const webview = host()
-  if (!webview) return mockRequest(type) as Promise<T>
+  if (!webview) return mockRequest(type, payload) as Promise<T>
 
   wire()
   return new Promise<T>((resolve, reject) => {
@@ -99,11 +100,31 @@ function startMockEvents(): void {
   emit('metrics', next())
 }
 
-async function mockRequest(type: string): Promise<unknown> {
+const mockStorage = createMockStorage(emit)
+
+async function mockRequest(type: string, payload: unknown): Promise<unknown> {
   await new Promise((resolve) => setTimeout(resolve, 120))
+  const body = (payload ?? {}) as { path?: string; paths?: string[]; confirmation?: string | null }
   switch (type) {
     case 'specs.get':
       return mockSpecs satisfies SystemSpecs
+    case 'storage.drives':
+      return mockStorage.drives()
+    case 'storage.scan':
+      return mockStorage.scan()
+    case 'storage.cancel':
+    case 'storage.reveal':
+    case 'storage.openUninstaller':
+    case 'storage.openRecycleBin':
+      return null
+    case 'storage.pickFolder':
+      return null
+    case 'storage.node':
+      return mockStorage.node(body.path ?? '')
+    case 'storage.preview':
+      return mockStorage.preview(body.paths ?? [])
+    case 'storage.delete':
+      return mockStorage.delete(body.paths ?? [], body.confirmation ?? null)
     default:
       throw new Error(`Moteur indisponible hors de l'application : ${type}`)
   }

@@ -103,3 +103,127 @@ export interface MetricsSnapshot {
   networkUpBytesPerSecond: number
   gpu: GpuMetrics | null
 }
+
+// ---- Storage -------------------------------------------------------------------------------------------------------
+
+export type NodeKind = 'folder' | 'file' | 'otherFiles'
+
+/** What the engine allows for an item: delete (Recycle Bin), only through the uninstaller, or nothing. */
+export type Verdict = 'allowed' | 'uninstallOnly' | 'blocked'
+
+export interface DriveDto {
+  path: string
+  label: string
+  totalBytes: number
+  freeBytes: number
+}
+
+export interface ChildDto {
+  path: string
+  name: string
+  kind: NodeKind
+  sizeBytes: number
+  fileCount: number
+  hasChildren: boolean
+  verdict: Verdict
+  title: string
+}
+
+export interface NodeDto {
+  path: string
+  name: string
+  kind: NodeKind
+  sizeBytes: number
+  fileCount: number
+  parentPath: string | null
+  verdict: Verdict
+  title: string
+  children: ChildDto[]
+  hiddenCount: number
+  hiddenBytes: number
+}
+
+export interface HogLocationDto {
+  path: string
+  sizeBytes: number
+  verdict: Verdict
+}
+
+export interface HogDto {
+  ruleId: string
+  title: string
+  explanation: string
+  advice: string
+  sizeBytes: number
+  locations: HogLocationDto[]
+  moreCount: number
+}
+
+export interface ScanSummaryDto {
+  rootPath: string
+  rootName: string
+  sizeBytes: number
+  fileCount: number
+  folderCount: number
+  elapsedSeconds: number
+  notes: string[]
+}
+
+export interface ScanReplyDto {
+  cancelled: boolean
+  summary: ScanSummaryDto | null
+  hogs: HogDto[]
+}
+
+export interface ScanProgressDto {
+  filesScanned: number
+  bytesScanned: number
+  currentPath: string
+}
+
+export interface UninstallHint {
+  launcher: string
+  label: string
+  uri: string
+}
+
+export interface DeletionAssessment {
+  path: string
+  verdict: Verdict
+  confirmation: 'standard' | 'typed'
+  title: string
+  note: string
+  uninstall: UninstallHint[]
+}
+
+export interface DeletionPreviewItem {
+  path: string
+  name: string
+  sizeBytes: number
+  fileCount: number
+  isFolder: boolean
+  assessment: DeletionAssessment
+}
+
+export interface DeletionPreview {
+  items: DeletionPreviewItem[]
+  totalBytes: number
+  canProceed: boolean
+  /** The word to type before deleting, when the engine asks for it. */
+  confirmationPhrase: string | null
+}
+
+export interface DeletionResult {
+  path: string
+  ok: boolean
+  error: string | null
+}
+
+export interface DeleteReplyDto {
+  results: DeletionResult[]
+  freedBytes: number
+  refused: boolean
+  reason: string | null
+  hogs: HogDto[]
+  rootSizeBytes: number
+}

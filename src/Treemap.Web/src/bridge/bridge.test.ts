@@ -19,7 +19,7 @@ describe('bridge outside the app (mock engine)', () => {
   })
 
   it('rejects requests it cannot answer instead of hanging', async () => {
-    await expect(request('storage.delete')).rejects.toThrow(/indisponible/)
+    await expect(request('nope.unknown')).rejects.toThrow(/indisponible/)
   })
 
   it('pushes metrics to subscribers and stops after unsubscribe', () => {
