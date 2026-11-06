@@ -3,10 +3,10 @@ namespace Treemap.App;
 /// <summary>
 /// Optional command-line switches, mostly handy while developing:
 /// <c>--tab=components|storage|monitor</c> opens a screen, <c>--scan=PATH</c> starts a scan of PATH (and opens the storage screen),
-/// <c>--dev</c> loads the interface from the Vite dev server instead of the built one.
+/// <c>--view=3d</c> opens the 3D view of the components, <c>--dev</c> loads the interface from the Vite dev server instead of the built one.
 /// Unknown arguments are ignored (<c>--web</c>, from the time the web interface was opt-in, included).
 /// </summary>
-public sealed record StartupOptions(int TabIndex = 0, string? ScanPath = null, bool DevServer = false)
+public sealed record StartupOptions(int TabIndex = 0, string? ScanPath = null, bool DevServer = false, bool View3d = false)
 {
     private static readonly string[] TabNames = ["components", "storage", "monitor"];
 
@@ -15,6 +15,7 @@ public sealed record StartupOptions(int TabIndex = 0, string? ScanPath = null, b
         var tab = 0;
         string? scanPath = null;
         var dev = false;
+        var view3d = false;
 
         foreach (var arg in args)
         {
@@ -35,12 +36,16 @@ public sealed record StartupOptions(int TabIndex = 0, string? ScanPath = null, b
                     tab = Array.IndexOf(TabNames, "storage");
                 }
             }
+            else if (arg.Equals("--view=3d", StringComparison.OrdinalIgnoreCase))
+            {
+                view3d = true;
+            }
             else if (arg.Equals("--dev", StringComparison.OrdinalIgnoreCase))
             {
                 dev = true;
             }
         }
 
-        return new StartupOptions(tab, scanPath, dev);
+        return new StartupOptions(tab, scanPath, dev, view3d);
     }
 }

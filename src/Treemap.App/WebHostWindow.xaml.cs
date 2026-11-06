@@ -28,6 +28,7 @@ public partial class WebHostWindow : Window
 
     private readonly string _startPage;
     private readonly string? _scanPath;
+    private readonly bool _view3d;
 
     public WebHostWindow(ISpecsProvider specs, MonitoringService monitoring, OverlayController overlay, GlobalHotkey hotkey, StartupOptions options)
     {
@@ -39,6 +40,7 @@ public partial class WebHostWindow : Window
         _dev = options.DevServer;
         _startPage = Pages[Math.Clamp(options.TabIndex, 0, Pages.Length - 1)];
         _scanPath = options.ScanPath;
+        _view3d = options.View3d;
         Loaded += async (_, _) => await InitializeWebAsync();
         Closed += (_, _) => _bridge?.Dispose();
     }
@@ -90,7 +92,9 @@ public partial class WebHostWindow : Window
             core, origin, _specs, _monitoring, _overlay,
             () => new HotkeyInfo(_hotkey.IsRegistered, GlobalHotkey.Description),
             _dev ? "--dev --tab=monitor" : "--tab=monitor");
-        var hash = _scanPath is null ? _startPage : $"{_startPage}?scan={Uri.EscapeDataString(_scanPath)}";
+        var hash = _scanPath is not null
+            ? $"{_startPage}?scan={Uri.EscapeDataString(_scanPath)}"
+            : _view3d ? $"{_startPage}?view=3d" : _startPage;
         core.Navigate($"{origin}/index.html#{hash}");
     }
 

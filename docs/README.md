@@ -8,6 +8,7 @@ Appli perso d'optimisation et de monitoring de PC (Windows 11). Repo : https://g
 | [architecture.md](architecture.md) | Choix techniques et structure du code |
 | [usage.md](usage.md) | Lancer l'appli, options, tests |
 | [storage-scan.md](storage-scan.md) | Comment les tailles sont calculées (fichiers creux, écarts avec Windows) |
+| [vue-3d.md](vue-3d.md) | La vue 3D des composants : principe, pièces, interactions, limites |
 | [storage-cleanup.md](storage-cleanup.md) | Supprimer depuis l'écran Stockage : Corbeille, garde-fous, désinstalleurs, Flight Simulator |
 | [monitoring.md](monitoring.md) | Mesures en direct, overlay en jeu, FPS : sources, limites, état de vérification |
 | [roadmap.md](roadmap.md) | Modules et ordre de construction |

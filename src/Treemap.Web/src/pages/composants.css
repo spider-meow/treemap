@@ -41,3 +41,17 @@
   color: var(--alert-text);
   font-weight: 600;
 }
+
+/* Fiche / Vue 3D: two buttons side by side, the pressed one filled. */
+.view-switch {
+  display: inline-flex;
+}
+
+.view-switch .button + .button {
+  margin-left: -2px;
+}
+
+.view-switch .button.is-active {
+  background: var(--ink);
+  color: var(--cream);
+}

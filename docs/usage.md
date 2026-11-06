@@ -26,6 +26,7 @@ L'appli n'a pas besoin des droits administrateur, sauf pour le FPS de l'overlay 
 |---|---|
 | `--tab=components`, `--tab=storage` ou `--tab=monitor` | ouvre directement un onglet |
 | `--scan=C:\chemin` | ouvre l'onglet Stockage et lance l'analyse du chemin |
+| `--view=3d` | ouvre Composants directement sur la vue 3D |
 | `--dev` | charge l'interface depuis le serveur Vite (`http://localhost:5173`), avec rechargement à chaud |
 
 ```bash

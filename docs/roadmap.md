@@ -17,7 +17,7 @@ Ordre proposé. Chaque étape doit être utilisable seule.
 - [x] Écran Stockage refait, avec suppression sécurisée (corbeille, dossiers système protégés, aperçu, confirmation ; désinstallation guidée des jeux par leur lanceur), voir [storage-cleanup.md](storage-cleanup.md)
 - [x] Stockage : suppression définitive forcée et vidage de la Corbeille (confirmation tapée)
 - [ ] Stockage : éléments dans des dossiers à chemin long, tri/filtre de la liste
-- [ ] Vue 3D des composants (cliquer un composant pour voir ses détails)
+- [x] Vue 3D des composants : planche éclatée en axonométrie, clic sur une pièce pour sa fiche (voir [vue-3d.md](vue-3d.md))
 - [ ] Réhabiller l'overlay avec la nouvelle palette
 - [x] Interface web par défaut, interface WPF retirée
 - [ ] Retirer de Treemap.Core le code devenu inutile (SquarifiedTreemap, SpecsSummary et leurs tests), DESIGN.md et revue finale du design
