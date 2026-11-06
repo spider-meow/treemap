@@ -1,0 +1,125 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-07T00:00:00.000Z",
+  "title": "Design System: treemap",
+  "extensions": {
+    "colorMeta": {
+      "cream": { "role": "neutral", "displayName": "Specimen Cream", "canonical": "#F4F1E1", "tonalRamp": ["#FBF9EF", "#F4F1E1", "#E8E4CC"] },
+      "cream-deep": { "role": "neutral", "displayName": "Plate Paper", "canonical": "#E8E4CC", "tonalRamp": ["#F4F1E1", "#E8E4CC", "#D6D1B4"] },
+      "ink": { "role": "neutral", "displayName": "Green-Black Ink", "canonical": "#0D2B24", "tonalRamp": ["#3B5C52", "#1B3F36", "#0D2B24"] },
+      "ink-soft": { "role": "neutral", "displayName": "Soft Ink", "canonical": "#3B5C52", "tonalRamp": ["#5C7B71", "#3B5C52", "#274840"] },
+      "forest": { "role": "primary", "displayName": "Forest Green", "canonical": "#015D47", "tonalRamp": ["#2E8269", "#015D47", "#013B2F"] },
+      "forest-deep": { "role": "primary", "displayName": "Deep Forest", "canonical": "#013B2F", "tonalRamp": ["#015D47", "#013B2F", "#012820"] },
+      "on-forest-soft": { "role": "neutral", "displayName": "Pale Forest", "canonical": "#B9D6C9", "tonalRamp": ["#DCEBE4", "#B9D6C9", "#9CC2B2"] },
+      "crest": { "role": "secondary", "displayName": "Crest Yellow", "canonical": "#E0F354", "tonalRamp": ["#EEF99A", "#E0F354", "#C4D63A"] },
+      "mandarin": { "role": "tertiary", "displayName": "Mandarin Orange", "canonical": "#FD550A", "tonalRamp": ["#FF8A55", "#FD550A", "#C93F02"] },
+      "alert-text": { "role": "tertiary", "displayName": "Alert Red", "canonical": "#B42A00", "tonalRamp": ["#D9552A", "#B42A00", "#8A2000"] }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Page Title", "purpose": "The page title, once per screen, over a 6 px ink rule. Width axis 75." },
+      "numeral": { "displayName": "Catalogue Numeral", "purpose": "The catalogue number of an object (01 to 11). Width axis 62. Never numbers sections." },
+      "headline": { "displayName": "Plate Title", "purpose": "Plate and dialog titles." },
+      "lead": { "displayName": "Summary Line", "purpose": "One plain-French sentence under the page title, max 62ch." },
+      "body": { "displayName": "Body", "purpose": "Values and prose. Tabular figures wherever data aligns." },
+      "label": { "displayName": "Label", "purpose": "Table heads, verdict tags, group titles. Uppercase, +0.04em." }
+    },
+    "shadows": [],
+    "motion": [
+      { "name": "ease-out", "value": "cubic-bezier(0.25, 1, 0.5, 1)", "purpose": "Default easing (ease-out-quart): state changes, page slides, plate entrances. Nothing bounces." },
+      { "name": "ease-out-expo", "value": "cubic-bezier(0.16, 1, 0.3, 1)", "purpose": "Bars filling, switch sliders, dialogs sliding up." },
+      { "name": "dur-fast", "value": "160ms", "purpose": "Hover and pressed state." },
+      { "name": "dur", "value": "280ms", "purpose": "Page change, plate entrance, selection." },
+      { "name": "dur-slow", "value": "360ms", "purpose": "Ruled bar fill." }
+    ],
+    "breakpoints": [
+      { "name": "sheet-regroup", "value": "860px (container)" },
+      { "name": "sheet-stack", "value": "520px (container)" },
+      { "name": "storage-columns", "value": "880px (container)" },
+      { "name": "overlay-panel", "value": "760px (container)" },
+      { "name": "page-header-wrap", "value": "1180px (viewport)" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The one primary action of a screen: Mandarin fill, ink text, inverting on hover.",
+      "html": "<button class=\"btn btn-primary\">Copier le résumé</button>",
+      "css": ".btn{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 24px;border:2px solid #0D2B24;border-radius:2px;font:700 15px/1 'Archivo Variable',sans-serif;cursor:pointer}.btn-primary{background:#FD550A;color:#0D2B24}.btn-primary:hover{background:#0D2B24;color:#FD550A}"
+    },
+    {
+      "name": "Danger Button",
+      "kind": "button",
+      "refersTo": "button-danger",
+      "description": "Irreversible actions only: permanent deletion, emptying the Recycle Bin.",
+      "html": "<button class=\"btn btn-danger\">Supprimer 185 Go définitivement</button>",
+      "css": ".btn{display:inline-flex;align-items:center;min-height:44px;padding:0 24px;border:2px solid #0D2B24;border-radius:2px;font:700 15px/1 'Archivo Variable',sans-serif;cursor:pointer}.btn-danger{background:#B42A00;color:#F4F1E1}.btn-danger:hover{background:#0D2B24}"
+    },
+    {
+      "name": "Specimen Plate",
+      "kind": "card",
+      "refersTo": "plate-paper",
+      "description": "A numbered plate: title on the left, condensed catalogue numeral on the right, ruled spec rows below.",
+      "html": "<section class=\"plate\"><header><h2>Processeur</h2><span class=\"num\">01</span></header><dl><div><dt>Modèle</dt><dd>Intel Core i5-10400F</dd></div><div><dt>Cœurs / threads</dt><dd>6 / 12</dd></div></dl></section>",
+      "css": ".plate{padding:24px;border:2px solid #0D2B24;border-radius:2px;background:#E8E4CC;color:#0D2B24;font-family:'Archivo Variable',sans-serif}.plate header{display:flex;align-items:flex-end;justify-content:space-between}.plate h2{margin:0;font:700 24px/1.1 'Archivo Variable',sans-serif}.plate .num{font:850 96px/.78 'Archivo Variable',sans-serif;font-stretch:62%}.plate dl{margin:16px 0 0}.plate dl div{display:grid;grid-template-columns:9.5rem 1fr;gap:12px;padding:8px 0;border-top:1px solid rgba(13,43,36,.35)}.plate dt{font-size:13px;color:#3B5C52}.plate dd{margin:0;font-weight:600}"
+    },
+    {
+      "name": "Ruled Bar",
+      "kind": "custom",
+      "refersTo": "plate-paper",
+      "description": "Usage as a ruler: ink-bordered track, 10 % graduations, Forest fill that turns Mandarin once usage is high.",
+      "html": "<div class=\"bar\"><div class=\"fill\"></div><div class=\"ticks\"></div></div>",
+      "css": ".bar{position:relative;height:24px;border:2px solid #0D2B24;background:#F4F1E1;overflow:hidden}.fill{position:absolute;inset:0;background:#FD550A;transform-origin:left;transform:scaleX(.89)}.ticks{position:absolute;inset:0;opacity:.55;background-image:repeating-linear-gradient(to right,transparent 0,transparent calc(10% - 2px),#0D2B24 calc(10% - 2px),#0D2B24 10%)}"
+    },
+    {
+      "name": "Verdict Tag",
+      "kind": "chip",
+      "refersTo": "plate-paper",
+      "description": "Text first: SUPPRIMABLE, DÉSINSTALLER (forest) or PROTÉGÉ (dashed). Colour only supports the word.",
+      "html": "<span class=\"tag\">Supprimable</span>",
+      "css": ".tag{display:inline-block;padding:0 8px;border:2px solid #0D2B24;background:#F4F1E1;color:#0D2B24;font:750 12px/1.5 'Archivo Variable',sans-serif;letter-spacing:.04em;text-transform:uppercase}"
+    },
+    {
+      "name": "Rail Item",
+      "kind": "nav",
+      "refersTo": "rail-item-active",
+      "description": "Un-numbered navigation on the forest rail; the active item is a Crest tab that slides between items.",
+      "html": "<nav class=\"rail\"><a class=\"item\">Composants</a><a class=\"item on\">Stockage</a></nav>",
+      "css": ".rail{display:flex;flex-direction:column;gap:4px;width:248px;padding:32px 16px;background:#015D47;color:#F4F1E1;font:600 15px 'Archivo Variable',sans-serif}.item{display:flex;align-items:center;min-height:44px;padding:0 12px;border-radius:2px}.item.on{background:#E0F354;color:#015D47;font-weight:700}"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Specimen Catalogue",
+    "overview": "treemap reads one PC the way an industrial catalogue of the Olivetti and Braun years reads a product range: every part, drive, game and process is a numbered specimen on a sheet, measured and explained in plain French. The surface is flat: colour arrives as full fields (Forest Green, Crest Yellow, Mandarin Orange) on a cream ground, and structure comes from 2 px ink rules, ruled spec rows, square corners and one grotesque used at two widths. It rejects the dark neon gaming dashboard and the grid of identical rounded translucent cards.",
+    "keyCharacteristics": [
+      "Numbered plates: an object's catalogue number follows it across every screen",
+      "Flat colour fields, 2 px ink rules, square corners",
+      "One grotesque, two voices: normal width to read, condensed heavy for numerals and titles",
+      "Live data in ruled tables and axis-labelled charts, never metric tiles or sparklines",
+      "Safe by construction: every destructive action shows what it will do first, and the engine decides"
+    ],
+    "rules": [
+      { "name": "The Fill-Not-Text Rule", "body": "Mandarin is a fill or a rule carrying ink, never text. Crest is for forest and ink grounds, never for text on cream.", "section": "colors" },
+      { "name": "The One Primary Rule", "body": "One Mandarin button per screen; everything else is secondary, quiet, or danger for irreversible actions only.", "section": "colors" },
+      { "name": "The Earned Orange Rule", "body": "Orange marks what deserves attention: a live value, a high usage, the current selection.", "section": "colors" },
+      { "name": "The Numerals Identify Rule", "body": "Large numerals are catalogue numbers of objects, never section, step or page numbers.", "section": "typography" },
+      { "name": "The Tabular Rule", "body": "Aligned figures use tabular numbers; live ones roll like a counter instead of jumping.", "section": "typography" },
+      { "name": "The Flat-By-Default Rule", "body": "No box-shadow anywhere. To stand out, take a heavier colour field or a rule.", "section": "elevation" }
+    ],
+    "dos": [
+      "Do use Mandarin only as a fill or rule carrying ink text, for the one primary action, live values, high usage and the current selection.",
+      "Do keep every border 2 px solid ink and every radius 2 px or less.",
+      "Do give each object its fixed catalogue number and reuse it on every screen.",
+      "Do state what an action will do, in plain French, before it does it, and show the way back or say there is none.",
+      "Do respect prefers-reduced-motion: travel becomes a short fade."
+    ],
+    "donts": [
+      "Don't use Crest Yellow as text or a thin line on cream (1.08:1).",
+      "Don't add shadows, blurs, glass, tinted gradients or glow.",
+      "Don't use hero-metric tiles, sparklines as content, or a grid of identical rounded cards.",
+      "Don't let colour carry meaning alone: also write the state.",
+      "Don't make the web page the authority on what may be deleted or closed: the engine decides and re-checks."
+    ]
+  }
+}

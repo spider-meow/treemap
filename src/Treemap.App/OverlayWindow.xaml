@@ -5,25 +5,35 @@
         WindowStyle="None" AllowsTransparency="True" Background="Transparent"
         Topmost="True" ShowInTaskbar="False" ShowActivated="False" Focusable="False"
         ResizeMode="NoResize" SizeToContent="WidthAndHeight">
-    <Border Background="#D9101216" CornerRadius="8" Padding="12,8">
+    <!-- A catalogue tag: ink field, square corners, a heavy orange rule on the left edge. -->
+    <Border Background="{StaticResource OverlayInk}" BorderBrush="{StaticResource OverlayRule}"
+            BorderThickness="4,0,0,0" CornerRadius="0" Padding="12,8">
         <ItemsControl ItemsSource="{Binding Lines}" Focusable="False">
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <Grid Margin="0,1">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="74" />
+                            <ColumnDefinition Width="84" />
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
-                        <TextBlock Text="{Binding Label}" Foreground="{StaticResource TextMuted}"
-                                   FontFamily="Consolas" FontSize="13" />
-                        <TextBlock Grid.Column="1" Text="{Binding Value}" FontFamily="Consolas" FontSize="13"
-                                   FontWeight="SemiBold">
+                        <TextBlock Text="{Binding Label}" Foreground="{StaticResource OverlayLabel}"
+                                   FontFamily="Bahnschrift SemiCondensed, Segoe UI" FontSize="13" />
+                        <TextBlock Grid.Column="1" Text="{Binding Value}"
+                                   FontFamily="Bahnschrift SemiBold, Segoe UI Semibold" FontSize="14">
                             <TextBlock.Style>
                                 <Style TargetType="TextBlock">
-                                    <Setter Property="Foreground" Value="{StaticResource TextPrimary}" />
+                                    <Setter Property="Foreground" Value="{StaticResource OverlayValue}" />
                                     <Style.Triggers>
+                                        <!-- The frame rate is the figure that matters in a game: it takes the highlight. -->
+                                        <MultiDataTrigger>
+                                            <MultiDataTrigger.Conditions>
+                                                <Condition Binding="{Binding Label}" Value="FPS" />
+                                                <Condition Binding="{Binding Dimmed}" Value="False" />
+                                            </MultiDataTrigger.Conditions>
+                                            <Setter Property="Foreground" Value="{StaticResource OverlayHighlight}" />
+                                        </MultiDataTrigger>
                                         <DataTrigger Binding="{Binding Dimmed}" Value="True">
-                                            <Setter Property="Foreground" Value="{StaticResource TextMuted}" />
+                                            <Setter Property="Foreground" Value="{StaticResource OverlayLabel}" />
                                         </DataTrigger>
                                     </Style.Triggers>
                                 </Style>

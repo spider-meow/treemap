@@ -18,9 +18,10 @@ Ordre proposé. Chaque étape doit être utilisable seule.
 - [x] Stockage : suppression définitive forcée et vidage de la Corbeille (confirmation tapée)
 - [ ] Stockage : éléments dans des dossiers à chemin long, tri/filtre de la liste
 - [x] Vue 3D des composants : planche éclatée en axonométrie, clic sur une pièce pour sa fiche (voir [vue-3d.md](vue-3d.md))
-- [ ] Réhabiller l'overlay avec la nouvelle palette
+- [x] Overlay repeint avec la nouvelle palette
 - [x] Interface web par défaut, interface WPF retirée
-- [ ] Retirer de Treemap.Core le code devenu inutile (SquarifiedTreemap, SpecsSummary et leurs tests), DESIGN.md et revue finale du design
+- [x] DESIGN.md et revue finale du design (voir [design.md](design.md))
+- [ ] Retirer de Treemap.Core le code devenu inutile (SquarifiedTreemap, SpecsSummary et leurs tests)
 
 ## 1. Stockage : V1 livrée
 - [x] Scan d'un dossier / d'un disque, avec progression et annulation

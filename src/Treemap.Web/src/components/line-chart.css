@@ -20,7 +20,7 @@
 
 .line-chart__tick {
   fill: currentColor;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 550;
   font-variant-numeric: tabular-nums;
   opacity: 0.85;

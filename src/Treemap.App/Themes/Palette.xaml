@@ -1,7 +1,13 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
-    <!-- What the native overlay window needs. The rest of the interface is the web interface (src/Treemap.Web). -->
-    <SolidColorBrush x:Key="TextPrimary" Color="#E7E9ED" />
-    <SolidColorBrush x:Key="TextMuted" Color="#8C94A3" />
+    <!--
+        What the native overlay window needs, in the colours of the web interface (src/Treemap.Web/src/styles/tokens.css).
+        Contrast on the ink ground: cream 13.3, label 7.4, crest 12.1. Mandarin is only ever a rule, never text.
+    -->
+    <SolidColorBrush x:Key="OverlayInk" Color="#0D2B24" />
+    <SolidColorBrush x:Key="OverlayRule" Color="#FD550A" />
+    <SolidColorBrush x:Key="OverlayLabel" Color="#9CC2B2" />
+    <SolidColorBrush x:Key="OverlayValue" Color="#F4F1E1" />
+    <SolidColorBrush x:Key="OverlayHighlight" Color="#E0F354" />
 </ResourceDictionary>
