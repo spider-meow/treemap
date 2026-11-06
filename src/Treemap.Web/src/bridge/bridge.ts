@@ -1,7 +1,8 @@
 import { createMockMetrics, mockSpecs } from './mock'
+import { createMockBooster } from './mockBooster'
 import { createMockOverlay } from './mockOverlay'
 import { createMockStorage } from './mockStorage'
-import type { MetricsSnapshot, OverlaySettings, SystemSpecs } from './types'
+import type { BoosterSettings, MetricsSnapshot, OverlaySettings, SystemSpecs } from './types'
 
 /**
  * Message bridge to the C# engine. Inside the app (WebView2) messages travel as JSON through
@@ -107,6 +108,12 @@ function startMockEvents(): void {
 
 const mockStorage = createMockStorage(emit)
 const mockOverlay = createMockOverlay()
+let mockBooster = createMockBooster(emit)
+
+/** Tests start each case from a fresh mock booster (it keeps a session and settings between calls). */
+export function resetMockBooster(): void {
+  mockBooster = createMockBooster(emit)
+}
 
 async function mockRequest(type: string, payload: unknown): Promise<unknown> {
   await new Promise((resolve) => setTimeout(resolve, 120))
@@ -114,6 +121,16 @@ async function mockRequest(type: string, payload: unknown): Promise<unknown> {
   switch (type) {
     case 'specs.get':
       return mockSpecs satisfies SystemSpecs
+    case 'booster.get':
+      return mockBooster.get()
+    case 'booster.update':
+      return mockBooster.update(payload as BoosterSettings)
+    case 'booster.start':
+      return mockBooster.start((payload as { pid: number }).pid)
+    case 'booster.stop':
+      return mockBooster.stop()
+    case 'booster.relaunch':
+      return mockBooster.relaunch()
     case 'overlay.get':
       return mockOverlay.get()
     case 'overlay.update':

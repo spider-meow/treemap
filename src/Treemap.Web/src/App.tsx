@@ -3,8 +3,8 @@ import { useState } from 'react'
 import { Rail, type PageId } from './components/Rail'
 import { useMetrics } from './hooks/useMetrics'
 import { useSpecs } from './hooks/useSpecs'
-import { ComingPage } from './pages/ComingPage'
 import { ComposantsPage } from './pages/ComposantsPage'
+import { JeuPage } from './pages/JeuPage'
 import { MoniteurPage } from './pages/MoniteurPage'
 import { StockagePage } from './pages/StockagePage'
 import './shell.css'
@@ -48,13 +48,7 @@ export default function App() {
               )}
               {page === 'stockage' && <StockagePage />}
               {page === 'moniteur' && <MoniteurPage latest={latest} history={history} />}
-              {page === 'jeu' && (
-                <ComingPage
-                  title="Jeu"
-                  summary="Préparer le PC avant de jouer, et mesurer ce que ça change."
-                  note="Cet écran n'existe pas encore : le booster de jeu est la prochaine grande étape."
-                />
-              )}
+              {page === 'jeu' && <JeuPage />}
             </motion.div>
           </AnimatePresence>
         </main>

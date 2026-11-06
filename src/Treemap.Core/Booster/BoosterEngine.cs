@@ -40,6 +40,7 @@ public sealed class BoosterEngine
     private readonly Func<DateTimeOffset> _clock;
     private readonly object _gate = new();
     private readonly HashSet<int> _dismissed = [];
+    private bool _seenInitialProcesses;
     private PowerPlan? _previousPlan;
 
     public BoosterEngine(
@@ -211,6 +212,15 @@ public sealed class BoosterEngine
                         changed = true;
                     }
                 }
+            }
+        }
+        else if (!_seenInitialProcesses)
+        {
+            // Games already open when the app starts are left to the manual button: automatic mode is for games opened later.
+            _seenInitialProcesses = true;
+            foreach (var running in Classified().Where(c => c.Role == ProcessRole.Game))
+            {
+                _dismissed.Add(running.Process.Id);
             }
         }
         else if (_settings().Auto)

@@ -264,3 +264,73 @@ export interface RecycleBinInfo {
   sizeBytes: number
   itemCount: number
 }
+
+// ---- Game booster -------------------------------------------------------------------------------------------------
+
+export interface BoosterSettings {
+  closeApps: boolean
+  highPriority: boolean
+  highPerformancePlan: boolean
+  auto: boolean
+  closeList: string[]
+  knownGames: string[]
+  pendingPowerPlan: string | null
+}
+
+export interface BoostSnapshot {
+  ramUsedBytes: number
+  processCount: number
+  cpuPercent: number
+}
+
+export interface BoostStep {
+  id: 'priority' | 'power' | 'close'
+  title: string
+  done: boolean
+  detail: string
+}
+
+export interface ClosedApp {
+  name: string
+  path: string | null
+  closed: boolean
+  relaunchable: boolean
+  relaunched: boolean
+}
+
+export interface BoostReport {
+  gameName: string
+  gameProcessId: number
+  startedAt: string
+  endedAt: string | null
+  before: BoostSnapshot
+  after: BoostSnapshot | null
+  steps: BoostStep[]
+  closedApps: ClosedApp[]
+  restoredPowerPlan: string | null
+}
+
+export interface BoosterGame {
+  id: number
+  name: string
+  title: string | null
+  known: boolean
+}
+
+export interface BoosterApp {
+  id: number
+  name: string
+  title: string | null
+  memoryBytes: number
+  picked: boolean
+}
+
+export interface BoosterState {
+  settings: BoosterSettings
+  games: BoosterGame[]
+  apps: BoosterApp[]
+  sessionActive: boolean
+  session: BoostReport | null
+  powerPlan: { guid: string; name: string } | null
+  highPerformanceAvailable: boolean
+}

@@ -289,6 +289,8 @@ public class BoosterTests
     [Fact]
     public void Tick_StartsASessionByItself_OnlyWhenAutoIsOn()
     {
+        _engine.Tick(); // first look: games already open are left alone
+        _processes.Running.Add(Game(101, "newgame", @"D:\Games\steamapps\common\New Game\newgame.exe"));
         _engine.Tick();
         Assert.False(_engine.IsActive);
 
@@ -296,18 +298,42 @@ public class BoosterTests
         _engine.Tick();
 
         Assert.True(_engine.IsActive);
+        Assert.Equal(101, _engine.Current!.GameProcessId);
+    }
+
+    [Fact]
+    public void Tick_NeverStartsByItself_ForAGameThatWasAlreadyOpen()
+    {
+        _settings = _settings with { Auto = true };
+
+        _engine.Tick();
+        _engine.Tick();
+
+        Assert.False(_engine.IsActive);
     }
 
     [Fact]
     public void Tick_DoesNotRestartTheSameGame_AfterTheUserStoppedTheSession()
     {
+        _engine.Tick(); // first look
+        _processes.Running.Add(Game(101, "newgame", @"D:\Games\steamapps\common\New Game\newgame.exe"));
         _settings = _settings with { Auto = true };
         _engine.Tick();
+        Assert.True(_engine.IsActive);
         _engine.Stop();
 
         _engine.Tick();
 
         Assert.False(_engine.IsActive);
+    }
+
+    [Fact]
+    public void Rules_DoNotTakeToolsInstalledNextToGamesForGames()
+    {
+        var wallpaper = App(9, "wallpaper64", @"D:\Games\steamapps\common\wallpaper_engine\bin\wallpaper64.exe");
+
+        Assert.Equal(ProcessRole.Closable, ProcessRules.Classify(wallpaper, [], 1, Windows));
+        Assert.Equal(ProcessRole.Game, ProcessRules.Classify(wallpaper, ["wallpaper64"], 1, Windows)); // unless the user says so
     }
 
     // ---- after the game ----

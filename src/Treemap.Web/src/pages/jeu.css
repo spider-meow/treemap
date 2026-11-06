@@ -1,0 +1,130 @@
+.games {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.games__item {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-3) var(--space-4);
+  padding: var(--space-3) 0;
+  border-top: var(--hairline);
+}
+
+.games__name {
+  display: flex;
+  flex-direction: column;
+  margin-right: auto;
+  min-width: 0;
+}
+
+.games__sub {
+  font-size: var(--text-xs);
+  color: var(--ink-soft);
+}
+
+.session__lead {
+  font-size: var(--text-lg);
+}
+
+.session__empty {
+  color: var(--ink-soft);
+  max-width: 52ch;
+}
+
+.session__actions,
+.session__closed {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-3);
+  margin-top: var(--space-3);
+}
+
+.session__closed {
+  padding-top: var(--space-3);
+  border-top: var(--hairline);
+  font-size: var(--text-sm);
+}
+
+.settings {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.known {
+  padding-top: var(--space-3);
+  border-top: var(--hairline);
+}
+
+.known__title {
+  font-size: var(--text-sm);
+  font-weight: 750;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.known__item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  font-size: var(--text-sm);
+}
+
+.apps__lead {
+  max-width: 80ch;
+  font-size: var(--text-sm);
+  color: var(--ink-soft);
+}
+
+.apps {
+  display: flex;
+  flex-direction: column;
+  border-top: var(--rule);
+}
+
+.apps__item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 6rem auto;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-1) 0;
+  border-bottom: var(--hairline);
+}
+
+.apps__pick {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
+  min-width: 0;
+  padding: var(--space-2) 0;
+  cursor: pointer;
+}
+
+.apps__pick input {
+  width: 1.125rem;
+  height: 1.125rem;
+  accent-color: var(--ink);
+  align-self: center;
+}
+
+.apps__name {
+  font-weight: 700;
+}
+
+.apps__title {
+  font-size: var(--text-sm);
+  color: var(--ink-soft);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.apps__memory {
+  text-align: right;
+  font-weight: 600;
+}

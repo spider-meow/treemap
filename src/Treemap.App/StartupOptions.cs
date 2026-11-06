@@ -2,13 +2,13 @@ namespace Treemap.App;
 
 /// <summary>
 /// Optional command-line switches, mostly handy while developing:
-/// <c>--tab=components|storage|monitor</c> opens a screen, <c>--scan=PATH</c> starts a scan of PATH (and opens the storage screen),
+/// <c>--tab=components|storage|monitor|game</c> opens a screen, <c>--scan=PATH</c> starts a scan of PATH (and opens the storage screen),
 /// <c>--view=3d</c> opens the 3D view of the components, <c>--dev</c> loads the interface from the Vite dev server instead of the built one.
 /// Unknown arguments are ignored (<c>--web</c>, from the time the web interface was opt-in, included).
 /// </summary>
 public sealed record StartupOptions(int TabIndex = 0, string? ScanPath = null, bool DevServer = false, bool View3d = false)
 {
-    private static readonly string[] TabNames = ["components", "storage", "monitor"];
+    private static readonly string[] TabNames = ["components", "storage", "monitor", "game"];
 
     public static StartupOptions Parse(IEnumerable<string> args)
     {

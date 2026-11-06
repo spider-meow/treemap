@@ -25,7 +25,7 @@ public partial class WebHostWindow : Window
     private readonly BoosterService _booster;
     private WebBridge? _bridge;
 
-    private static readonly string[] Pages = ["composants", "stockage", "moniteur"];
+    private static readonly string[] Pages = ["composants", "stockage", "moniteur", "jeu"];
 
     private readonly string _startPage;
     private readonly string? _scanPath;

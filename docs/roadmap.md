@@ -59,8 +59,14 @@ Ordre proposé. Chaque étape doit être utilisable seule.
 - [ ] Raccourci personnalisable
 - [ ] Icône dans la zone de notification pour garder l'overlay actif fenêtre fermée
 
-## 5. Booster de jeu
-À cadrer avec l'utilisateur avant de coder. Pistes retenues : détection du lancement d'un jeu, fermeture (avec liste et accord) des applications gourmandes en arrière-plan, priorité du processus du jeu, plan d'alimentation hautes performances, tout restauré à la fermeture du jeu, avec une mesure avant/après. Les « nettoyeurs de RAM » sont écartés (effet placebo). Aucune injection de code dans les jeux.
+## 5. Booster de jeu : V1 livrée
+- [x] Détection des jeux (dossiers de bibliothèques + liste à la main), outils exclus
+- [x] Session : priorité haute, plan Hautes performances, fermeture polie des applications cochées, mesure avant/après
+- [x] Restauration à la fin (jeu fermé, bouton, fermeture de l'appli) et après un plantage ; relance des applications fermées
+- [x] Mode automatique, éteint par défaut, pour les jeux ouverts pendant que treemap tourne
+- [ ] **Essayer une vraie session avec un jeu** (non fait : le moteur est testé avec de faux processus, rien n'a été fermé sur le vrai PC)
+- [ ] Applications dans la zone de notification (sans fenêtre), profils par jeu, historique des sessions
+- [ ] Icône dans la zone de notification pour garder le booster actif fenêtre fermée
 
 ## 6. Optimisation
 - [ ] Programmes au démarrage (lecture, puis activation/désactivation avec confirmation)
