@@ -12,6 +12,10 @@ public sealed class SettingsStore
         Converters = { new JsonStringEnumConverter() },
     };
 
+    // Several parts of the app (overlay, booster) keep their own section: each change is applied to what is on disk now,
+    // so one never overwrites the other with a stale copy.
+    private static readonly object Gate = new();
+
     private readonly string _path;
 
     public SettingsStore(string? path = null)
@@ -32,11 +36,23 @@ public sealed class SettingsStore
             }
 
             var settings = JsonSerializer.Deserialize<AppSettings>(File.ReadAllText(_path), Options) ?? new AppSettings();
-            return settings with { Overlay = settings.Overlay.Normalized() };
+            return settings with { Overlay = settings.Overlay.Normalized(), Booster = settings.Booster.Normalized() };
         }
         catch (Exception ex) when (ex is JsonException or IOException or UnauthorizedAccessException)
         {
             return new AppSettings();
+        }
+    }
+
+    /// <summary>Reads the current settings, applies the change, saves and returns the result.</summary>
+    public AppSettings Update(Func<AppSettings, AppSettings> change)
+    {
+        lock (Gate)
+        {
+            var updated = change(Load());
+            updated = updated with { Overlay = updated.Overlay.Normalized(), Booster = updated.Booster.Normalized() };
+            Save(updated);
+            return updated;
         }
     }
 
