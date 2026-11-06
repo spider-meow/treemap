@@ -78,7 +78,8 @@ public sealed class StorageSession
         Result is { } result ? StorageTree.Find(result.Root, path) : null;
 
     /// <summary>What deleting these paths would do, with the verdict for each. Nested selections count once, under the outer folder.</summary>
-    public DeletionPreview Preview(IEnumerable<string> paths)
+    /// <param name="permanent">The deletion will skip the Recycle Bin: the typed confirmation is then always required.</param>
+    public DeletionPreview Preview(IEnumerable<string> paths, bool permanent = false)
     {
         var items = new List<DeletionPreviewItem>();
 
@@ -105,12 +106,22 @@ public sealed class StorageSession
             items,
             items.Sum(i => i.SizeBytes),
             canProceed,
-            canProceed && typed ? DeletionAdvisor.ConfirmationPhrase : null);
+            canProceed && (typed || permanent) ? DeletionAdvisor.ConfirmationPhrase : null);
     }
 
-    public DeletionOutcome Delete(IEnumerable<string> paths, string? confirmation, IRecycler recycler)
+    public DeletionOutcome Delete(IEnumerable<string> paths, string? confirmation, IRecycler recycler) =>
+        Run(paths, confirmation, permanent: false, recycler.Recycle);
+
+    /// <summary>
+    /// Forced deletion: no Recycle Bin, no way back. Same checks as <see cref="Delete"/> (protected items stay protected),
+    /// and the typed confirmation is always required.
+    /// </summary>
+    public DeletionOutcome DeletePermanently(IEnumerable<string> paths, string? confirmation, IPermanentDeleter deleter) =>
+        Run(paths, confirmation, permanent: true, deleter.Delete);
+
+    private DeletionOutcome Run(IEnumerable<string> paths, string? confirmation, bool permanent, Func<string, RecycleResult> remove)
     {
-        var preview = Preview(paths);
+        var preview = Preview(paths, permanent);
 
         if (!preview.CanProceed)
         {
@@ -137,7 +148,7 @@ public sealed class StorageSession
                 continue;
             }
 
-            var outcome = recycler.Recycle(node.FullPath);
+            var outcome = remove(node.FullPath);
             if (outcome.Success)
             {
                 freed += node.SizeBytes;

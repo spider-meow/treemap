@@ -37,7 +37,7 @@ public sealed class WebBridge : IDisposable
         _overlay.Register(_router);
 
         _router.Register("specs.get", async () => await specs.GetAsync());
-        new StorageBridge(new StorageSession(), new ShellRecycler(), new ShellLauncher(), PostEvent).Register(_router);
+        new StorageBridge(new StorageSession(), new ShellRecycler(), new FileSystemDeleter(), new ShellRecycleBin(), new ShellLauncher(), PostEvent).Register(_router);
 
         // Runs on the UI thread (messages arrive there), which the dialog needs.
         _router.Register("storage.pickFolder", () =>

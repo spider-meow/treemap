@@ -79,21 +79,33 @@ public sealed class StorageBridge
 
     private readonly StorageSession _session;
     private readonly IRecycler _recycler;
+    private readonly IPermanentDeleter _deleter;
+    private readonly IRecycleBin _bin;
     private readonly IShellLauncher _launcher;
     private readonly Action<string, object?> _emit;
     private long _lastProgressTicks;
 
-    public StorageBridge(StorageSession session, IRecycler recycler, IShellLauncher launcher, Action<string, object?> emit)
+    public StorageBridge(
+        StorageSession session,
+        IRecycler recycler,
+        IPermanentDeleter deleter,
+        IRecycleBin bin,
+        IShellLauncher launcher,
+        Action<string, object?> emit)
     {
         _session = session;
         _recycler = recycler;
+        _deleter = deleter;
+        _bin = bin;
         _launcher = launcher;
         _emit = emit;
     }
 
     private sealed record PathRequest(string? Path);
 
-    private sealed record PathsRequest(string[]? Paths, string? Confirmation);
+    private sealed record PathsRequest(string[]? Paths, string? Confirmation, bool Permanent = false);
+
+    private sealed record ConfirmationRequest(string? Confirmation);
 
     private sealed record LauncherRequest(string? Path, string? Launcher);
 
@@ -107,7 +119,7 @@ public sealed class StorageBridge
             return Task.FromResult<object?>(null);
         });
         router.Register("storage.node", p => Task.FromResult<object?>(Node(Read<PathRequest>(p).Path)));
-        router.Register("storage.preview", p => Task.FromResult<object?>(_session.Preview(Read<PathsRequest>(p).Paths ?? [])));
+        router.Register("storage.preview", p => Task.FromResult<object?>(PreviewOf(Read<PathsRequest>(p))));
         router.Register("storage.delete", p => Task.Run<object?>(() => Delete(Read<PathsRequest>(p))));
         router.Register("storage.reveal", p =>
         {
@@ -115,6 +127,8 @@ public sealed class StorageBridge
             _launcher.Reveal(node.FullPath);
             return Task.FromResult<object?>(null);
         });
+        router.Register("storage.recycleBin", () => Task.FromResult<object?>(_bin.Query()));
+        router.Register("storage.emptyRecycleBin", p => Task.Run<object?>(() => EmptyRecycleBin(Read<ConfirmationRequest>(p))));
         router.Register("storage.openRecycleBin", () =>
         {
             _launcher.OpenRecycleBin();
@@ -204,9 +218,30 @@ public sealed class StorageBridge
             assessment.Verdict, assessment.Title, shown, hidden.Count, hidden.Sum(c => c.SizeBytes));
     }
 
+    private DeletionPreview PreviewOf(PathsRequest request) =>
+        _session.Preview(request.Paths ?? [], request.Permanent);
+
+    /// <summary>Emptying the bin is permanent too: it needs the same typed word, checked here.</summary>
+    private RecycleBinInfo EmptyRecycleBin(ConfirmationRequest request)
+    {
+        if (!DeletionAdvisor.ConfirmationPhrase.Equals(request.Confirmation?.Trim(), StringComparison.OrdinalIgnoreCase))
+        {
+            throw new InvalidOperationException($"Confirmation manquante : tape {DeletionAdvisor.ConfirmationPhrase} pour vider la Corbeille.");
+        }
+
+        if (_bin.Empty() is { } error)
+        {
+            throw new InvalidOperationException(error);
+        }
+
+        return _bin.Query();
+    }
+
     private DeleteReplyDto Delete(PathsRequest request)
     {
-        var outcome = _session.Delete(request.Paths ?? [], request.Confirmation, _recycler);
+        var outcome = request.Permanent
+            ? _session.DeletePermanently(request.Paths ?? [], request.Confirmation, _deleter)
+            : _session.Delete(request.Paths ?? [], request.Confirmation, _recycler);
         return new DeleteReplyDto(
             outcome.Results, outcome.FreedBytes, outcome.Refused, outcome.Reason, Hogs(), _session.Result?.Root.SizeBytes ?? 0);
     }

@@ -19,6 +19,32 @@ public class StorageBridgeTests : IDisposable
         }
     }
 
+    private sealed class FakeDeleter : IPermanentDeleter
+    {
+        public List<string> Deleted { get; } = [];
+
+        public RecycleResult Delete(string path)
+        {
+            Deleted.Add(path);
+            return new RecycleResult(true);
+        }
+    }
+
+    private sealed class FakeBin : IRecycleBin
+    {
+        public int Emptied { get; private set; }
+
+        public string? EmptyError { get; set; }
+
+        public RecycleBinInfo Query() => new(1234, 5);
+
+        public string? Empty()
+        {
+            Emptied++;
+            return EmptyError;
+        }
+    }
+
     private sealed class FakeLauncher : IShellLauncher
     {
         public List<string> Revealed { get; } = [];
@@ -37,6 +63,8 @@ public class StorageBridgeTests : IDisposable
     private readonly string _root = Path.Combine(Path.GetTempPath(), "treemap-bridge-" + Guid.NewGuid().ToString("N"));
     private readonly FakeRecycler _recycler = new();
     private readonly FakeLauncher _launcher = new();
+    private readonly FakeDeleter _deleter = new();
+    private readonly FakeBin _bin = new();
     private readonly List<(string Type, object? Payload)> _events = [];
     private readonly BridgeRouter _router = new();
     private int _nextId = 1;
@@ -49,7 +77,7 @@ public class StorageBridgeTests : IDisposable
         File.WriteAllBytes(Path.Combine(_root, "node_modules", "b.bin"), new byte[500]);
         File.WriteAllBytes(Path.Combine(_root, "top.bin"), new byte[100]);
 
-        new StorageBridge(new StorageSession(), _recycler, _launcher, (type, payload) => _events.Add((type, payload)))
+        new StorageBridge(new StorageSession(), _recycler, _deleter, _bin, _launcher, (type, payload) => _events.Add((type, payload)))
             .Register(_router);
     }
 
@@ -187,6 +215,71 @@ public class StorageBridgeTests : IDisposable
         var deleted = await Ok("storage.delete", new { paths = new[] { game } });
         Assert.True(deleted.GetProperty("refused").GetBoolean());
         Assert.Empty(_recycler.Recycled);
+    }
+
+    [Fact]
+    public async Task PermanentDelete_AlwaysNeedsTheTypedWord_AndSkipsTheRecycleBin()
+    {
+        await Scan();
+        var target = Path.Combine(_root, "docs");
+
+        var preview = await Ok("storage.preview", new { paths = new[] { target }, permanent = true });
+        Assert.Equal("SUPPRIMER", preview.GetProperty("confirmationPhrase").GetString());
+        var plain = await Ok("storage.preview", new { paths = new[] { target } });
+        Assert.Equal(JsonValueKind.Null, plain.GetProperty("confirmationPhrase").ValueKind);
+
+        var refused = await Ok("storage.delete", new { paths = new[] { target }, permanent = true });
+        Assert.True(refused.GetProperty("refused").GetBoolean());
+        Assert.Empty(_deleter.Deleted);
+
+        var done = await Ok("storage.delete", new { paths = new[] { target }, permanent = true, confirmation = "supprimer" });
+        Assert.False(done.GetProperty("refused").GetBoolean());
+        Assert.Equal([target], _deleter.Deleted, StringComparer.OrdinalIgnoreCase);
+        Assert.Empty(_recycler.Recycled);
+        Assert.Equal(600, done.GetProperty("rootSizeBytes").GetInt64());
+    }
+
+    [Fact]
+    public async Task PermanentDelete_DoesNotLiftTheProtections()
+    {
+        var steamapps = Path.Combine(_root, "steamapps", "common", "Hades");
+        Directory.CreateDirectory(steamapps);
+        File.WriteAllBytes(Path.Combine(steamapps, "game.bin"), new byte[10]);
+        await Scan();
+
+        var reply = await Ok("storage.delete", new { paths = new[] { steamapps }, permanent = true, confirmation = "SUPPRIMER" });
+
+        Assert.True(reply.GetProperty("refused").GetBoolean());
+        Assert.Empty(_deleter.Deleted);
+
+        var outside = await Ok("storage.delete", new { paths = new[] { @"C:\Windows\System32" }, permanent = true, confirmation = "SUPPRIMER" });
+        Assert.True(outside.GetProperty("refused").GetBoolean());
+    }
+
+    [Fact]
+    public async Task RecycleBin_ReportsItsSize_AndOnlyEmptiesWithTheTypedWord()
+    {
+        var info = await Ok("storage.recycleBin");
+        Assert.Equal(1234, info.GetProperty("sizeBytes").GetInt64());
+        Assert.Equal(5, info.GetProperty("itemCount").GetInt64());
+
+        Assert.False((await Call("storage.emptyRecycleBin")).GetProperty("ok").GetBoolean());
+        Assert.False((await Call("storage.emptyRecycleBin", new { confirmation = "oui" })).GetProperty("ok").GetBoolean());
+        Assert.Equal(0, _bin.Emptied);
+
+        await Ok("storage.emptyRecycleBin", new { confirmation = " supprimer " });
+        Assert.Equal(1, _bin.Emptied);
+    }
+
+    [Fact]
+    public async Task EmptyRecycleBin_ReportsWindowsFailures()
+    {
+        _bin.EmptyError = "Windows n'a pas pu vider la Corbeille.";
+
+        var reply = await Call("storage.emptyRecycleBin", new { confirmation = "SUPPRIMER" });
+
+        Assert.False(reply.GetProperty("ok").GetBoolean());
+        Assert.Contains("Corbeille", reply.GetProperty("error").GetString());
     }
 
     [Fact]
