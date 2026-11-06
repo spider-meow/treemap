@@ -22,6 +22,7 @@ public partial class WebHostWindow : Window
     private readonly bool _dev;
     private readonly OverlayController _overlay;
     private readonly GlobalHotkey _hotkey;
+    private readonly BoosterService _booster;
     private WebBridge? _bridge;
 
     private static readonly string[] Pages = ["composants", "stockage", "moniteur"];
@@ -30,13 +31,14 @@ public partial class WebHostWindow : Window
     private readonly string? _scanPath;
     private readonly bool _view3d;
 
-    public WebHostWindow(ISpecsProvider specs, MonitoringService monitoring, OverlayController overlay, GlobalHotkey hotkey, StartupOptions options)
+    public WebHostWindow(ISpecsProvider specs, MonitoringService monitoring, OverlayController overlay, GlobalHotkey hotkey, BoosterService booster, StartupOptions options)
     {
         InitializeComponent();
         _specs = specs;
         _monitoring = monitoring;
         _overlay = overlay;
         _hotkey = hotkey;
+        _booster = booster;
         _dev = options.DevServer;
         _startPage = Pages[Math.Clamp(options.TabIndex, 0, Pages.Length - 1)];
         _scanPath = options.ScanPath;
@@ -89,7 +91,7 @@ public partial class WebHostWindow : Window
         };
 
         _bridge = new WebBridge(
-            core, origin, _specs, _monitoring, _overlay,
+            core, origin, _specs, _monitoring, _overlay, _booster,
             () => new HotkeyInfo(_hotkey.IsRegistered, GlobalHotkey.Description),
             _dev ? "--dev --tab=monitor" : "--tab=monitor");
         var hash = _scanPath is not null

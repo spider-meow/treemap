@@ -54,8 +54,9 @@ public sealed class OverlayController : IOverlayControl, IDisposable
 
     public void Update(Func<OverlaySettings, OverlaySettings> change)
     {
-        _settings = _settings with { Overlay = change(_settings.Overlay).Normalized() };
-        TrySave();
+        var normalized = change(_settings.Overlay).Normalized();
+        _settings = _settings with { Overlay = normalized };
+        TrySave(normalized);
         Apply();
         Changed?.Invoke(this, EventArgs.Empty);
     }
@@ -107,11 +108,12 @@ public sealed class OverlayController : IOverlayControl, IDisposable
             FpsState);
     }
 
-    private void TrySave()
+    private void TrySave(OverlaySettings overlay)
     {
         try
         {
-            _store.Save(_settings);
+            // Only the overlay section is written, on top of what is on disk now (the booster keeps its own).
+            _store.Update(settings => settings with { Overlay = overlay });
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
         {

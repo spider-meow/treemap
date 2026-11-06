@@ -19,6 +19,7 @@ public sealed class WebBridge : IDisposable
     private readonly MonitoringService _monitoring;
     private readonly OverlayController _overlayController;
     private readonly OverlayBridge _overlay;
+    private readonly BoosterService _booster;
 
     public WebBridge(
         CoreWebView2 webView,
@@ -26,6 +27,7 @@ public sealed class WebBridge : IDisposable
         ISpecsProvider specs,
         MonitoringService monitoring,
         OverlayController overlay,
+        BoosterService booster,
         Func<HotkeyInfo> hotkey,
         string relaunchArguments)
     {
@@ -35,6 +37,9 @@ public sealed class WebBridge : IDisposable
         _overlayController = overlay;
         _overlay = new OverlayBridge(overlay, hotkey, () => AdminRelauncher.Relaunch(relaunchArguments));
         _overlay.Register(_router);
+        _booster = booster;
+        booster.Bridge.Register(_router);
+        booster.Engine.Changed += OnBoosterChanged;
 
         _router.Register("specs.get", async () => await specs.GetAsync());
         new StorageBridge(new StorageSession(), new ShellRecycler(), new FileSystemDeleter(), new ShellRecycleBin(), new ShellLauncher(), PostEvent).Register(_router);
@@ -55,6 +60,7 @@ public sealed class WebBridge : IDisposable
     {
         _monitoring.Updated -= OnMetrics;
         _overlayController.Changed -= OnOverlayChanged;
+        _booster.Engine.Changed -= OnBoosterChanged;
         _webView.WebMessageReceived -= OnMessage;
     }
 
@@ -81,6 +87,10 @@ public sealed class WebBridge : IDisposable
             PostEvent("fps", _overlay.Fps());
         }
     }
+
+    // Listing the processes takes a moment: build the state off the UI thread, then post it.
+    private void OnBoosterChanged(object? sender, EventArgs e) =>
+        Task.Run(() => PostEvent("booster.changed", _booster.Bridge.State()));
 
     private void OnOverlayChanged(object? sender, EventArgs e) => PostEvent("overlay.changed", _overlay.State());
 

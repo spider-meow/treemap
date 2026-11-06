@@ -9,7 +9,7 @@ public class BoosterTests
 {
     private const string Windows = @"C:\Windows";
 
-    private sealed class FakeProcesses : IProcessSystem
+    internal sealed class FakeProcesses : IProcessSystem
     {
         public List<RunningProcess> Running { get; } = [];
 
@@ -56,7 +56,7 @@ public class BoosterTests
         }
     }
 
-    private sealed class FakePlans : IPowerPlans
+    internal sealed class FakePlans : IPowerPlans
     {
         public PowerPlan? Current { get; set; } = new("381b4222-f694-41f0-9685-ff5bb260df2e", "Équilibré");
 

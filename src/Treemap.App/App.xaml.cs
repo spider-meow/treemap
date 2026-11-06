@@ -11,6 +11,7 @@ public partial class App : Application
     private MonitoringService? _monitoring;
     private OverlayController? _overlay;
     private GlobalHotkey? _hotkey;
+    private BoosterService? _booster;
 
     protected override void OnStartup(StartupEventArgs e)
     {
@@ -20,8 +21,9 @@ public partial class App : Application
         _monitoring = new MonitoringService(new SystemMetricsSource(), Dispatcher);
         _overlay = new OverlayController(_monitoring, new SettingsStore(), Dispatcher);
         _hotkey = new GlobalHotkey(_overlay.Toggle);
+        _booster = new BoosterService(_monitoring, new SettingsStore(), Dispatcher);
 
-        var window = new WebHostWindow(new WmiSpecsProvider(), _monitoring, _overlay, _hotkey, options);
+        var window = new WebHostWindow(new WmiSpecsProvider(), _monitoring, _overlay, _hotkey, _booster, options);
 
         // Registered before the window is shown so the overlay settings read the real state on first display.
         _hotkey.Register(window);
@@ -29,10 +31,12 @@ public partial class App : Application
 
         _monitoring.Start();
         _overlay.Start();
+        _booster.Start();
     }
 
     protected override void OnExit(ExitEventArgs e)
     {
+        _booster?.Dispose();
         _hotkey?.Dispose();
         _overlay?.Dispose();
         _monitoring?.Dispose();
