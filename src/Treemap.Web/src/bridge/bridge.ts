@@ -110,7 +110,7 @@ const mockOverlay = createMockOverlay()
 
 async function mockRequest(type: string, payload: unknown): Promise<unknown> {
   await new Promise((resolve) => setTimeout(resolve, 120))
-  const body = (payload ?? {}) as { path?: string; paths?: string[]; confirmation?: string | null }
+  const body = (payload ?? {}) as { path?: string; paths?: string[]; confirmation?: string | null; permanent?: boolean }
   switch (type) {
     case 'specs.get':
       return mockSpecs satisfies SystemSpecs
@@ -134,9 +134,13 @@ async function mockRequest(type: string, payload: unknown): Promise<unknown> {
     case 'storage.node':
       return mockStorage.node(body.path ?? '')
     case 'storage.preview':
-      return mockStorage.preview(body.paths ?? [])
+      return mockStorage.preview(body.paths ?? [], body.permanent ?? false)
     case 'storage.delete':
-      return mockStorage.delete(body.paths ?? [], body.confirmation ?? null)
+      return mockStorage.delete(body.paths ?? [], body.confirmation ?? null, body.permanent ?? false)
+    case 'storage.recycleBin':
+      return mockStorage.recycleBin()
+    case 'storage.emptyRecycleBin':
+      return mockStorage.emptyRecycleBin(body.confirmation ?? null)
     default:
       throw new Error(`Moteur indisponible hors de l'application : ${type}`)
   }

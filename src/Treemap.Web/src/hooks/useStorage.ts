@@ -8,6 +8,7 @@ import type {
   NodeDto,
   ScanProgressDto,
   ScanReplyDto,
+  RecycleBinInfo,
   ScanSummaryDto,
 } from '../bridge/types'
 
@@ -42,6 +43,7 @@ function messageOf(error: unknown): string {
 /** Everything the Stockage screen needs from the engine: drives, one scan at a time, browsing, and checked deletion. */
 export function useStorage() {
   const [state, setState] = useState<StorageState>(INITIAL)
+  const [bin, setBin] = useState<RecycleBinInfo | null>(null)
   const nodeRef = useRef<NodeDto | null>(null)
   const rootRef = useRef<string | null>(null)
 
@@ -50,6 +52,7 @@ export function useStorage() {
     request<DriveDto[]>('storage.drives')
       .then((drives) => !cancelled && setState((s) => ({ ...s, drives })))
       .catch((error) => !cancelled && setState((s) => ({ ...s, error: messageOf(error) })))
+    void refreshBin()
     const unsubscribe = subscribe<ScanProgressDto>('storage.progress', (progress) =>
       setState((s) => (s.phase === 'scanning' ? { ...s, progress } : s)),
     )
@@ -57,6 +60,18 @@ export function useStorage() {
       cancelled = true
       unsubscribe()
     }
+  }, [])
+
+  const refreshBin = useCallback(async () => {
+    try {
+      setBin(await request<RecycleBinInfo>('storage.recycleBin'))
+    } catch {
+      setBin(null)
+    }
+  }, [])
+
+  const emptyBin = useCallback(async (confirmation: string) => {
+    setBin(await request<RecycleBinInfo>('storage.emptyRecycleBin', { confirmation }))
   }, [])
 
   /** Shows a folder. Returns false (and says why when asked to) if the engine no longer has it. */
@@ -101,12 +116,16 @@ export function useStorage() {
     setState((s) => ({ ...s, phase: 'idle', node: null, summary: null, hogs: [] }))
   }, [])
 
-  const preview = useCallback((paths: string[]) => request<DeletionPreview>('storage.preview', { paths }), [])
+  const preview = useCallback(
+    (paths: string[], permanent = false) => request<DeletionPreview>('storage.preview', { paths, permanent }),
+    [],
+  )
 
   const remove = useCallback(
-    async (paths: string[], confirmation: string | null) => {
-      const reply = await request<DeleteReplyDto>('storage.delete', { paths, confirmation })
+    async (paths: string[], confirmation: string | null, permanent = false) => {
+      const reply = await request<DeleteReplyDto>('storage.delete', { paths, confirmation, permanent })
       if (!reply.refused) {
+        void refreshBin()
         setState((s) => ({
           ...s,
           hogs: reply.hogs,
@@ -121,7 +140,7 @@ export function useStorage() {
       }
       return reply
     },
-    [open],
+    [open, refreshBin],
   )
 
   const reveal = useCallback((path: string) => request('storage.reveal', { path }), [])
@@ -135,5 +154,5 @@ export function useStorage() {
 
   const pickFolder = useCallback(() => request<string | null>('storage.pickFolder'), [])
 
-  return { state, scan, cancel, open, backToDrives, preview, remove, reveal, openUninstaller, openRecycleBin, pickFolder }
+  return { state, bin, emptyBin, scan, cancel, open, backToDrives, preview, remove, reveal, openUninstaller, openRecycleBin, pickFolder }
 }

@@ -2,12 +2,13 @@ import { useEffect, useRef, useState } from 'react'
 import type { DeleteReplyDto, DeletionPreview } from '../bridge/types'
 import { formatBytes } from '../lib/format'
 import { Button } from './Button'
+import { Switch } from './Switch'
 import './delete-dialog.css'
 
 interface DeleteDialogProps {
   paths: string[]
-  preview: (paths: string[]) => Promise<DeletionPreview>
-  remove: (paths: string[], confirmation: string | null) => Promise<DeleteReplyDto>
+  preview: (paths: string[], permanent: boolean) => Promise<DeletionPreview>
+  remove: (paths: string[], confirmation: string | null, permanent: boolean) => Promise<DeleteReplyDto>
   openUninstaller: (path: string, launcher: string) => Promise<unknown>
   openRecycleBin: () => Promise<unknown>
   /** `deleted` is true when something was sent to the Recycle Bin, so the screen can clear its selection. */
@@ -28,8 +29,11 @@ export function DeleteDialog({ paths, preview, remove, openUninstaller, openRecy
   const dialog = useRef<HTMLDialogElement>(null)
   const [phase, setPhase] = useState<Phase>('loading')
   const [plan, setPlan] = useState<DeletionPreview | null>(null)
+  // Which mode the plan on screen was computed for: right after a switch it is stale and must not be acted on.
+  const [planIsPermanent, setPlanIsPermanent] = useState(false)
   const [reply, setReply] = useState<DeleteReplyDto | null>(null)
   const [typed, setTyped] = useState('')
+  const [permanent, setPermanent] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
@@ -38,10 +42,12 @@ export function DeleteDialog({ paths, preview, remove, openUninstaller, openRecy
 
   useEffect(() => {
     let cancelled = false
-    preview(paths)
+    setPhase((current) => (current === 'loading' ? current : 'ready'))
+    preview(paths, permanent)
       .then((result) => {
         if (cancelled) return
         setPlan(result)
+        setPlanIsPermanent(permanent)
         setPhase('ready')
       })
       .catch((e) => {
@@ -52,8 +58,9 @@ export function DeleteDialog({ paths, preview, remove, openUninstaller, openRecy
     return () => {
       cancelled = true
     }
-  }, [paths, preview])
+  }, [paths, permanent, preview])
 
+  const fresh = planIsPermanent === permanent
   const phrase = plan?.confirmationPhrase ?? null
   const confirmed = !phrase || typed.trim().toUpperCase() === phrase
   const busy = phase === 'working'
@@ -62,10 +69,10 @@ export function DeleteDialog({ paths, preview, remove, openUninstaller, openRecy
   const close = () => onClose(deletedSomething)
 
   const run = async () => {
-    if (!plan?.canProceed || !confirmed) return
+    if (!plan?.canProceed || !fresh || !confirmed) return
     setPhase('working')
     try {
-      const result = await remove(paths, phrase ? typed.trim() : null)
+      const result = await remove(paths, phrase ? typed.trim() : null, permanent)
       setReply(result)
       if (result.refused) {
         setError(result.reason)
@@ -94,7 +101,13 @@ export function DeleteDialog({ paths, preview, remove, openUninstaller, openRecy
     >
       <div className="delete-dialog__body">
         <h2 id="delete-title" className="delete-dialog__title">
-          {phase === 'done' ? 'Envoyé à la corbeille' : 'Envoyer à la corbeille ?'}
+          {phase === 'done'
+            ? permanent
+              ? 'Supprimé définitivement'
+              : 'Envoyé à la corbeille'
+            : permanent
+              ? 'Supprimer définitivement ?'
+              : 'Envoyer à la corbeille ?'}
         </h2>
 
         {phase === 'loading' && <p role="status">Vérification de ce que contient la sélection…</p>}
@@ -125,7 +138,19 @@ export function DeleteDialog({ paths, preview, remove, openUninstaller, openRecy
               ))}
             </ul>
 
-            {plan.canProceed ? (
+            {plan.canProceed && (
+              <div className="delete-dialog__force">
+                <Switch checked={permanent} onChange={setPermanent} hint="Sans passer par la Corbeille : impossible à annuler.">
+                  Supprimer définitivement
+                </Switch>
+              </div>
+            )}
+
+            {plan.canProceed && permanent ? (
+              <p className="delete-dialog__assurance delete-dialog__assurance--stop" role="alert">
+                Irréversible : ces éléments ne pourront pas être restaurés. Les éléments protégés (Windows, jeux installés…) restent protégés.
+              </p>
+            ) : plan.canProceed ? (
               <p className="delete-dialog__assurance">
                 Les éléments vont dans la Corbeille de Windows : tu peux les y restaurer tant que tu ne la vides pas.
                 L’espace n’est réellement libéré qu’une fois la Corbeille vidée.
@@ -141,7 +166,8 @@ export function DeleteDialog({ paths, preview, remove, openUninstaller, openRecy
             {phrase && plan.canProceed && (
               <label className="delete-dialog__confirm">
                 <span>
-                  Ce sont des données personnelles ou volumineuses. Tape <strong>{phrase}</strong> pour confirmer.
+                  {permanent ? 'Pour confirmer la suppression définitive' : 'Ce sont des données personnelles ou volumineuses'}, tape{' '}
+                  <strong>{phrase}</strong>.
                 </span>
                 <input
                   value={typed}
@@ -158,8 +184,16 @@ export function DeleteDialog({ paths, preview, remove, openUninstaller, openRecy
         {phase === 'done' && reply && (
           <>
             <p className="delete-dialog__done">
-              <span className="num">{formatBytes(reply.freedBytes)}</span> partis dans la Corbeille. Ils ne libéreront de la place
-              qu’une fois la Corbeille vidée.
+              {permanent ? (
+                <>
+                  <span className="num">{formatBytes(reply.freedBytes)}</span> supprimés définitivement : l’espace est libéré.
+                </>
+              ) : (
+                <>
+                  <span className="num">{formatBytes(reply.freedBytes)}</span> partis dans la Corbeille. Ils ne libéreront de la place
+                  qu’une fois la Corbeille vidée.
+                </>
+              )}
             </p>
             {failures.length > 0 && (
               <ul className="delete-list" role="alert">
@@ -183,7 +217,7 @@ export function DeleteDialog({ paths, preview, remove, openUninstaller, openRecy
         <div className="delete-dialog__footer">
           {phase === 'done' ? (
             <>
-              <Button onClick={() => void openRecycleBin()}>Ouvrir la Corbeille</Button>
+              {!permanent && <Button onClick={() => void openRecycleBin()}>Ouvrir la Corbeille</Button>}
               <Button variant="primary" onClick={close}>
                 Terminé
               </Button>
@@ -193,8 +227,14 @@ export function DeleteDialog({ paths, preview, remove, openUninstaller, openRecy
               <Button onClick={close} disabled={busy}>
                 Annuler
               </Button>
-              <Button variant="primary" onClick={run} disabled={!plan?.canProceed || !confirmed || busy}>
-                {busy ? 'Envoi en cours…' : plan ? `Envoyer ${formatBytes(plan.totalBytes)} à la corbeille` : 'Envoyer à la corbeille'}
+              <Button variant={permanent ? 'danger' : 'primary'} onClick={run} disabled={!plan?.canProceed || !fresh || !confirmed || busy}>
+                {busy
+                  ? 'Suppression en cours…'
+                  : plan
+                    ? permanent
+                      ? `Supprimer ${formatBytes(plan.totalBytes)} définitivement`
+                      : `Envoyer ${formatBytes(plan.totalBytes)} à la corbeille`
+                    : 'Envoyer à la corbeille'}
               </Button>
             </>
           )}

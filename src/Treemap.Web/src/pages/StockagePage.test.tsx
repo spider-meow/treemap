@@ -65,6 +65,45 @@ describe('Stockage screen', () => {
     expect(screen.queryByText('Bibliothèques de jeux')).not.toBeInTheDocument()
   }, 15000)
 
+  it('forces a permanent deletion only after the warning and the typed word', async () => {
+    const user = await scanSystemDrive()
+
+    await user.click(screen.getByRole('checkbox', { name: 'Sélectionner Jeux' }))
+    const bar = await screen.findByRole('region', { name: 'Sélection à supprimer' })
+    await user.click(within(bar).getByRole('button', { name: /Supprimer/ }))
+    const dialog = await screen.findByRole('dialog', { hidden: true })
+
+    await user.click(await within(dialog).findByRole('switch', { name: /Supprimer définitivement/ }))
+    expect(await within(dialog).findByText(/Irréversible : ces éléments ne pourront pas être restaurés/)).toBeInTheDocument()
+
+    const confirm = await within(dialog).findByRole('button', { name: /définitivement$/ })
+    expect(confirm).toBeDisabled()
+    await user.type(await within(dialog).findByRole('textbox'), 'supprimer')
+    await waitFor(() => expect(confirm).toBeEnabled())
+    await user.click(confirm)
+
+    expect(await within(dialog).findByText(/supprimés définitivement : l’espace est libéré/)).toBeInTheDocument()
+    expect(within(dialog).queryByRole('button', { name: 'Ouvrir la Corbeille' })).not.toBeInTheDocument()
+  }, 15000)
+
+  it('shows what the Recycle Bin holds and empties it behind the typed word', async () => {
+    const user = userEvent.setup()
+    render(<StockagePage />)
+
+    const strip = await screen.findByRole('region', { name: 'Corbeille' })
+    expect(within(strip).getByText(/L’espace n’est libéré qu’en la vidant/)).toBeInTheDocument()
+
+    await user.click(within(strip).getByRole('button', { name: /Vider la Corbeille/ }))
+    const dialog = await screen.findByRole('dialog', { hidden: true })
+    const confirm = within(dialog).getByRole('button', { name: 'Vider la Corbeille' })
+    expect(confirm).toBeDisabled()
+
+    await user.type(within(dialog).getByRole('textbox'), 'SUPPRIMER')
+    await user.click(confirm)
+
+    await waitFor(() => expect(screen.queryByRole('region', { name: 'Corbeille' })).not.toBeInTheDocument())
+  }, 15000)
+
   it('refuses to proceed until the typed word is entered for personal data', async () => {
     const user = await scanSystemDrive()
 

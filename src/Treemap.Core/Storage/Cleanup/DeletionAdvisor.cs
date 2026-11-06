@@ -317,7 +317,7 @@ public static partial class DeletionAdvisor
     private static DeletionAssessment Generic(string full, long sizeBytes) =>
         sizeBytes >= LargeItemBytes
             ? Allow(full, "Gros élément", "Ce n'est pas un élément que treemap reconnaît, mais il est volumineux : confirme en connaissance de cause.", ConfirmationLevel.Typed)
-            : Allow(full, "Élément", "Sera envoyé à la corbeille : tu pourras le restaurer.");
+            : Allow(full, "Élément", "Aucune particularité connue pour cet élément.");
 
     // ---- disk probing ------------------------------------------------------------------------------------------
 

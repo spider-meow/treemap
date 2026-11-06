@@ -100,7 +100,7 @@ function verdictOf(node: MockNode): { verdict: Verdict; title: string } {
 function assess(node: MockNode): DeletionAssessment {
   const { verdict, title } = verdictOf(node)
   const notes: Record<Verdict, string> = {
-    allowed: 'Sera envoyé à la corbeille : tu pourras le restaurer.',
+    allowed: 'Aucune particularité connue pour cet élément.',
     uninstallOnly: 'Ce sont les fichiers du jeu lui-même : désinstalle-le depuis son lanceur.',
     blocked: 'Géré par Windows : il ne se supprime pas à la main.',
   }
@@ -120,6 +120,7 @@ function assess(node: MockNode): DeletionAssessment {
 
 export function createMockStorage(emit: (type: string, payload: unknown) => void) {
   let root = buildTree()
+  let bin = { sizeBytes: 2.4 * GO, itemCount: 18 }
 
   const find = (path: string, from: MockNode = root): MockNode | undefined => {
     if (from.path.toLowerCase() === path.toLowerCase()) return from
@@ -178,6 +179,14 @@ export function createMockStorage(emit: (type: string, payload: unknown) => void
   })
 
   return {
+    recycleBin: () => bin,
+
+    emptyRecycleBin(confirmation: string | null) {
+      if (confirmation?.trim().toUpperCase() !== 'SUPPRIMER') throw new Error('Confirmation manquante : tape SUPPRIMER pour vider la Corbeille.')
+      bin = { sizeBytes: 0, itemCount: 0 }
+      return bin
+    },
+
     drives: (): DriveDto[] => [
       { path: 'C:\\', label: 'Windows', totalBytes: 930 * GO, freeBytes: 107 * GO },
       { path: 'D:\\', label: 'Jeux', totalBytes: 1862 * GO, freeBytes: 900 * GO },
@@ -228,18 +237,18 @@ export function createMockStorage(emit: (type: string, payload: unknown) => void
       }
     },
 
-    preview(paths: string[]): DeletionPreview {
+    preview(paths: string[], permanent = false): DeletionPreview {
       const items = paths
         .map((p) => find(p))
         .filter((n): n is MockNode => n !== undefined)
         .map((n) => ({ path: n.path, name: n.name, sizeBytes: n.size, fileCount: n.files, isFolder: n.isFolder, assessment: assess(n) }))
       const canProceed = items.length > 0 && items.every((i) => i.assessment.verdict === 'allowed')
       const typed = items.some((i) => i.assessment.confirmation === 'typed')
-      return { items, totalBytes: items.reduce((s, i) => s + i.sizeBytes, 0), canProceed, confirmationPhrase: canProceed && typed ? 'SUPPRIMER' : null }
+      return { items, totalBytes: items.reduce((s, i) => s + i.sizeBytes, 0), canProceed, confirmationPhrase: canProceed && (typed || permanent) ? 'SUPPRIMER' : null }
     },
 
-    delete(paths: string[], confirmation: string | null): DeleteReplyDto {
-      const preview = this.preview(paths)
+    delete(paths: string[], confirmation: string | null, permanent = false): DeleteReplyDto {
+      const preview = this.preview(paths, permanent)
       if (!preview.canProceed) return { results: [], freedBytes: 0, refused: true, reason: 'Au moins un élément ne peut pas être supprimé d\'ici : rien n\'a été touché.', hogs: hogs(), rootSizeBytes: root.size }
       if (preview.confirmationPhrase && confirmation?.trim().toUpperCase() !== preview.confirmationPhrase) {
         return { results: [], freedBytes: 0, refused: true, reason: `Confirmation manquante : tape ${preview.confirmationPhrase} pour continuer.`, hogs: hogs(), rootSizeBytes: root.size }
@@ -249,6 +258,7 @@ export function createMockStorage(emit: (type: string, payload: unknown) => void
         if (parent) parent.children = parent.children.filter((c) => c.path !== item.path)
       }
       recompute(root)
+      if (!permanent) bin = { sizeBytes: bin.sizeBytes + preview.totalBytes, itemCount: bin.itemCount + preview.items.length }
       return { results: preview.items.map((i) => ({ path: i.path, ok: true, error: null })), freedBytes: preview.totalBytes, refused: false, reason: null, hogs: hogs(), rootSizeBytes: root.size }
     },
   }

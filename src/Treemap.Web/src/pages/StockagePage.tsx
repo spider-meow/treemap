@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from 'react'
 import type { ChildDto, DeletionPreviewItem, DriveDto, HogDto, Verdict } from '../bridge/types'
 import { Button } from '../components/Button'
 import { DeleteDialog } from '../components/DeleteDialog'
+import { EmptyBinDialog } from '../components/EmptyBinDialog'
 import { PageHeader } from '../components/PageHeader'
 import { RollingNumber } from '../components/RollingNumber'
 import { RuledBar } from '../components/RuledBar'
@@ -44,8 +45,9 @@ function scanFromHash(): string | null {
 
 export function StockagePage() {
   const storage = useStorage()
-  const { state } = storage
+  const { state, bin } = storage
   const { scan } = storage
+  const [emptying, setEmptying] = useState(false)
 
   useEffect(() => {
     const path = scanFromHash()
@@ -79,6 +81,25 @@ export function StockagePage() {
         <p className="status status--error" role="alert">
           {state.error}
         </p>
+      )}
+
+      {bin && bin.itemCount > 0 && state.phase !== 'scanning' && (
+        <section className="bin" aria-label="Corbeille">
+          <p className="bin__text">
+            <strong>Corbeille</strong> · <span className="num">{bin.itemCount.toLocaleString('fr-FR')}</span> élément{bin.itemCount > 1 ? 's' : ''},{' '}
+            <span className="num">{formatBytes(bin.sizeBytes)}</span>. L’espace n’est libéré qu’en la vidant.
+          </p>
+          <Button variant="quiet" onClick={() => void storage.openRecycleBin()}>
+            Ouvrir
+          </Button>
+          <Button icon={<Trash2 aria-hidden />} onClick={() => setEmptying(true)}>
+            Vider la Corbeille…
+          </Button>
+        </section>
+      )}
+
+      {emptying && bin && (
+        <EmptyBinDialog info={bin} onEmpty={storage.emptyBin} onClose={() => setEmptying(false)} />
       )}
 
       <AnimatePresence mode="wait" initial={false}>

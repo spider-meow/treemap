@@ -1,6 +1,6 @@
 # Suppression depuis l'écran Stockage
 
-Décidé avec l'utilisateur : **Corbeille par défaut, avec garde-fous**. Rien n'est supprimé définitivement par treemap.
+Décidé avec l'utilisateur : **Corbeille par défaut, avec garde-fous**. Par défaut rien n'est supprimé définitivement ; la suppression définitive n'existe que si l'utilisateur la force explicitement (voir plus bas).
 
 ## Principe
 
@@ -10,6 +10,18 @@ Décidé avec l'utilisateur : **Corbeille par défaut, avec garde-fous**. Rien n
 4. Le moteur envoie chaque élément à la **Corbeille de Windows** (`SHFileOperation`, avec « annuler » possible, donc « Restaurer » fonctionne).
 
 La Corbeille ne libère de la place qu'une fois vidée : l'interface le dit, et propose d'ouvrir la Corbeille. Vider la Corbeille n'est pas fait par treemap.
+
+## Forcer : suppression définitive
+
+Dans la fenêtre de suppression, l'interrupteur **« Supprimer définitivement »** saute la Corbeille (`FileSystemDeleter`) : irréversible. Garde-fous :
+
+- la **confirmation tapée** (`SUPPRIMER`) est toujours exigée, et vérifiée par le moteur ;
+- les protections restent entières : un élément `blocked` ou `uninstallOnly` (Windows, jeux installés, liens, profil…) est refusé même en mode forcé, et un seul refus annule toute la demande ;
+- les attributs lecture seule sont levés avant de supprimer (fréquents dans `node_modules` et les dossiers de jeux) ; un fichier utilisé par un programme est signalé comme non supprimé, sans rien casser d'autre.
+
+## Vider la Corbeille
+
+Une bande en haut de l'écran Stockage montre le contenu de la Corbeille (`storage.recycleBin`, lecture seule) et propose « Vider la Corbeille… » : suppression définitive pour tous les disques, derrière la même confirmation tapée (`storage.emptyRecycleBin`, vérifiée par le moteur).
 
 ## Qui décide : le moteur, pas l'interface
 
@@ -41,4 +53,4 @@ Seules ces adresses peuvent être lancées (`DeletionAdvisor.IsSafeLauncherUri`)
 
 ## Messages du pont
 
-`storage.drives`, `storage.scan` (réponse à la fin, évènement `storage.progress` pendant), `storage.cancel`, `storage.node`, `storage.preview`, `storage.delete`, `storage.reveal`, `storage.openUninstaller`, `storage.openRecycleBin`, `storage.pickFolder`. Détail du format dans [architecture.md](architecture.md).
+`storage.drives`, `storage.scan` (réponse à la fin, évènement `storage.progress` pendant), `storage.cancel`, `storage.node`, `storage.preview`, `storage.delete`, `storage.reveal`, `storage.openUninstaller`, `storage.openRecycleBin`, `storage.recycleBin`, `storage.emptyRecycleBin`, (`preview` et `delete` acceptent `permanent: true`), `storage.pickFolder`. Détail du format dans [architecture.md](architecture.md).

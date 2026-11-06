@@ -259,3 +259,8 @@ export interface FpsReading {
   processName: string
   fps: number
 }
+
+export interface RecycleBinInfo {
+  sizeBytes: number
+  itemCount: number
+}

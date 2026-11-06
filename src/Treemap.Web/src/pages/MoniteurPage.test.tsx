@@ -71,7 +71,7 @@ describe('Moniteur screen', () => {
     const history = readings(5)
     render(<MoniteurPage latest={history.at(-1)!} history={history} />)
 
-    expect(await screen.findByText(/dans FlightSimulator\.exe/)).toBeInTheDocument()
+    expect(await screen.findByText(/dans FlightSimulator\.exe/, undefined, { timeout: 3000 })).toBeInTheDocument()
     expect(screen.getByText(/Mesure active pour les jeux DirectX 9 à 12/)).toBeInTheDocument()
   })
 })

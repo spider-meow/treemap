@@ -65,3 +65,14 @@
 .button--quiet:hover:not(:disabled) {
   background: var(--crest);
 }
+
+/* Irreversible actions: the alert red as a fill with cream text (5.9:1), flipping to ink on hover. */
+.button--danger {
+  background: var(--alert-text);
+  color: var(--cream);
+}
+
+.button--danger:hover:not(:disabled) {
+  background: var(--ink);
+  color: var(--cream);
+}

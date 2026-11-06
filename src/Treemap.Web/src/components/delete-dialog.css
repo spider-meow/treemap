@@ -146,3 +146,8 @@
   padding-top: var(--space-4);
   border-top: var(--hairline);
 }
+
+.delete-dialog__force {
+  padding-top: var(--space-2);
+  border-top: var(--hairline);
+}

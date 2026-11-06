@@ -468,3 +468,21 @@
 .selection-bar :focus-visible {
   outline-color: var(--crest);
 }
+
+/* ---- recycle bin strip ---- */
+
+.bin {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-3) var(--space-4);
+  margin-bottom: var(--space-5);
+  padding: var(--space-3) var(--space-5);
+  border: var(--rule);
+  background: var(--cream-deep);
+}
+
+.bin__text {
+  margin-right: auto;
+  font-size: var(--text-sm);
+}

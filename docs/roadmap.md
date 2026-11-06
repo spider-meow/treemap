@@ -15,7 +15,8 @@ Ordre proposé. Chaque étape doit être utilisable seule.
 - [x] Écran Composants refait, branché sur le vrai moteur (specs et mesures en direct)
 - [x] Écran Moniteur refait (graphiques sur deux minutes, réglages de l'overlay, état du FPS et relance en administrateur)
 - [x] Écran Stockage refait, avec suppression sécurisée (corbeille, dossiers système protégés, aperçu, confirmation ; désinstallation guidée des jeux par leur lanceur), voir [storage-cleanup.md](storage-cleanup.md)
-- [ ] Stockage : vider la Corbeille depuis l'appli (action séparée, avec confirmation), éléments gérés dans des dossiers à chemin long, tri/filtre de la liste
+- [x] Stockage : suppression définitive forcée et vidage de la Corbeille (confirmation tapée)
+- [ ] Stockage : éléments dans des dossiers à chemin long, tri/filtre de la liste
 - [ ] Vue 3D des composants (cliquer un composant pour voir ses détails)
 - [ ] Réhabiller l'overlay avec la nouvelle palette
 - [x] Interface web par défaut, interface WPF retirée
